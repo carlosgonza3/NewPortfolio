@@ -49,12 +49,30 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 			if (!root) return;
 
 			const media = gsap.matchMedia();
+			const cardPointerCleanups: Array<() => void> = [];
 			const heroSurface = root.querySelector<HTMLElement>("[data-scroll-scene='hero']");
+			const stars = Array.from(root.querySelectorAll<HTMLElement>(".hero-stars span")).map((element) => ({
+				depth: Number(element.dataset.starDepth ?? 1),
+				element,
+				peak: Number(element.dataset.starPeak ?? 0.4),
+				x: Number(element.dataset.starX ?? 0),
+				y: Number(element.dataset.starY ?? 0),
+			}));
 			const supportsMeshInteraction = window.matchMedia("(pointer: fine) and (prefers-reduced-motion: no-preference)");
 			let meshFrame: number | null = null;
 			let meshPointer: { x: number; y: number } | null = null;
 			let orbPosition = { x: 0.72, y: 0.38 };
 			let orbTarget = { x: 0.72, y: 0.38 };
+			let cloudNearPosition = { x: 0, y: 0 };
+			let cloudNearTarget = { x: 0, y: 0 };
+			let cloudFarPosition = { x: 0, y: 0 };
+			let cloudFarTarget = { x: 0, y: 0 };
+			let sundownWarmPosition = { x: 0, y: 0 };
+			let sundownWarmTarget = { x: 0, y: 0 };
+			let sundownRosePosition = { x: 0, y: 0 };
+			let sundownRoseTarget = { x: 0, y: 0 };
+			let sundownVioletPosition = { x: 0, y: 0 };
+			let sundownVioletTarget = { x: 0, y: 0 };
 
 			const updateMesh = () => {
 				if (!heroSurface) return;
@@ -70,19 +88,73 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 					heroSurface.style.setProperty("--mesh-rotate-y", `${normalizedX * 1.8}deg`);
 					heroSurface.style.setProperty("--mesh-shift-x", `${normalizedX * 8}px`);
 					heroSurface.style.setProperty("--mesh-shift-y", `${normalizedY * 7}px`);
+
 				}
 
 				orbPosition = {
 					x: orbPosition.x + (orbTarget.x - orbPosition.x) * 0.055,
 					y: orbPosition.y + (orbTarget.y - orbPosition.y) * 0.055,
 				};
+				cloudNearPosition = {
+					x: cloudNearPosition.x + (cloudNearTarget.x - cloudNearPosition.x) * 0.035,
+					y: cloudNearPosition.y + (cloudNearTarget.y - cloudNearPosition.y) * 0.035,
+				};
+				cloudFarPosition = {
+					x: cloudFarPosition.x + (cloudFarTarget.x - cloudFarPosition.x) * 0.022,
+					y: cloudFarPosition.y + (cloudFarTarget.y - cloudFarPosition.y) * 0.022,
+				};
+				sundownWarmPosition = {
+					x: sundownWarmPosition.x + (sundownWarmTarget.x - sundownWarmPosition.x) * 0.052,
+					y: sundownWarmPosition.y + (sundownWarmTarget.y - sundownWarmPosition.y) * 0.052,
+				};
+				sundownRosePosition = {
+					x: sundownRosePosition.x + (sundownRoseTarget.x - sundownRosePosition.x) * 0.038,
+					y: sundownRosePosition.y + (sundownRoseTarget.y - sundownRosePosition.y) * 0.038,
+				};
+				sundownVioletPosition = {
+					x: sundownVioletPosition.x + (sundownVioletTarget.x - sundownVioletPosition.x) * 0.028,
+					y: sundownVioletPosition.y + (sundownVioletTarget.y - sundownVioletPosition.y) * 0.028,
+				};
 				heroSurface.style.setProperty("--orb-x", `${orbPosition.x * 100}%`);
 				heroSurface.style.setProperty("--orb-y", `${orbPosition.y * 100}%`);
+				heroSurface.style.setProperty("--cloud-near-x", `${cloudNearPosition.x}px`);
+				heroSurface.style.setProperty("--cloud-near-y", `${cloudNearPosition.y}px`);
+				heroSurface.style.setProperty("--cloud-far-x", `${cloudFarPosition.x}px`);
+				heroSurface.style.setProperty("--cloud-far-y", `${cloudFarPosition.y}px`);
+				heroSurface.style.setProperty("--sundown-warm-x", `${sundownWarmPosition.x}px`);
+				heroSurface.style.setProperty("--sundown-warm-y", `${sundownWarmPosition.y}px`);
+				heroSurface.style.setProperty("--sundown-rose-x", `${sundownRosePosition.x}px`);
+				heroSurface.style.setProperty("--sundown-rose-y", `${sundownRosePosition.y}px`);
+				heroSurface.style.setProperty("--sundown-violet-x", `${sundownVioletPosition.x}px`);
+				heroSurface.style.setProperty("--sundown-violet-y", `${sundownVioletPosition.y}px`);
 
-				const isOrbMoving =
+				const isAmbientMoving =
 					Math.abs(orbTarget.x - orbPosition.x) > 0.0004 ||
-					Math.abs(orbTarget.y - orbPosition.y) > 0.0004;
-				meshFrame = isOrbMoving ? window.requestAnimationFrame(updateMesh) : null;
+					Math.abs(orbTarget.y - orbPosition.y) > 0.0004 ||
+					Math.abs(cloudNearTarget.x - cloudNearPosition.x) > 0.04 ||
+					Math.abs(cloudNearTarget.y - cloudNearPosition.y) > 0.04 ||
+					Math.abs(cloudFarTarget.x - cloudFarPosition.x) > 0.04 ||
+					Math.abs(cloudFarTarget.y - cloudFarPosition.y) > 0.04 ||
+					Math.abs(sundownWarmTarget.x - sundownWarmPosition.x) > 0.05 ||
+					Math.abs(sundownWarmTarget.y - sundownWarmPosition.y) > 0.05 ||
+					Math.abs(sundownRoseTarget.x - sundownRosePosition.x) > 0.05 ||
+					Math.abs(sundownRoseTarget.y - sundownRosePosition.y) > 0.05 ||
+					Math.abs(sundownVioletTarget.x - sundownVioletPosition.x) > 0.05 ||
+					Math.abs(sundownVioletTarget.y - sundownVioletPosition.y) > 0.05;
+				meshFrame = isAmbientMoving ? window.requestAnimationFrame(updateMesh) : null;
+			};
+
+			const updateStars = (x: number, y: number) => {
+				const normalizedX = x - 0.5;
+				const normalizedY = y - 0.5;
+				stars.forEach((star) => {
+					const distance = Math.hypot((x - star.x) * 1.45, y - star.y);
+					const proximity = Math.max(0, 1 - distance / 0.24);
+					star.element.style.setProperty("--star-cursor-glow", (proximity * 0.72).toFixed(3));
+					star.element.style.setProperty("--star-peak", Math.min(0.96, star.peak + proximity * 0.36).toFixed(3));
+					star.element.style.setProperty("--star-parallax-x", `${normalizedX * star.depth * 2.6}px`);
+					star.element.style.setProperty("--star-parallax-y", `${normalizedY * star.depth * 2}px`);
+				});
 			};
 
 			const handleMeshPointer = (event: PointerEvent) => {
@@ -96,6 +168,27 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 					x: 0.72 + (meshPointer.x - 0.5) * 0.14,
 					y: 0.38 + (meshPointer.y - 0.5) * 0.1,
 				};
+				cloudNearTarget = {
+					x: (meshPointer.x - 0.5) * 34,
+					y: (meshPointer.y - 0.5) * 22,
+				};
+				cloudFarTarget = {
+					x: (meshPointer.x - 0.5) * -18,
+					y: (meshPointer.y - 0.5) * -12,
+				};
+				sundownWarmTarget = {
+					x: (meshPointer.x - 0.5) * 104,
+					y: (meshPointer.y - 0.5) * 72,
+				};
+				sundownRoseTarget = {
+					x: (meshPointer.x - 0.5) * -82,
+					y: (meshPointer.y - 0.5) * 48,
+				};
+				sundownVioletTarget = {
+					x: (meshPointer.x - 0.5) * 58,
+					y: (meshPointer.y - 0.5) * -64,
+				};
+				updateStars(meshPointer.x, meshPointer.y);
 				if (meshFrame === null) meshFrame = window.requestAnimationFrame(updateMesh);
 			};
 
@@ -103,12 +196,23 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				if (!heroSurface) return;
 				meshPointer = null;
 				orbTarget = { x: 0.72, y: 0.38 };
+				cloudNearTarget = { x: 0, y: 0 };
+				cloudFarTarget = { x: 0, y: 0 };
+				sundownWarmTarget = { x: 0, y: 0 };
+				sundownRoseTarget = { x: 0, y: 0 };
+				sundownVioletTarget = { x: 0, y: 0 };
 				heroSurface.style.setProperty("--mesh-x", "50%");
 				heroSurface.style.setProperty("--mesh-y", "50%");
 				heroSurface.style.setProperty("--mesh-rotate-x", "0deg");
 				heroSurface.style.setProperty("--mesh-rotate-y", "0deg");
 				heroSurface.style.setProperty("--mesh-shift-x", "0px");
 				heroSurface.style.setProperty("--mesh-shift-y", "0px");
+				stars.forEach((star) => {
+					star.element.style.setProperty("--star-cursor-glow", "0");
+					star.element.style.setProperty("--star-peak", `${star.peak}`);
+					star.element.style.setProperty("--star-parallax-x", "0px");
+					star.element.style.setProperty("--star-parallax-y", "0px");
+				});
 				if (meshFrame === null) meshFrame = window.requestAnimationFrame(updateMesh);
 			};
 
@@ -190,31 +294,245 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				const approach = root.querySelector<HTMLElement>("[data-scroll-scene='approach']");
 				if (approach) {
 					const primary = gsap.utils.toArray<HTMLElement>(approach.querySelectorAll("[data-approach-primary]"));
-					const detail = gsap.utils.toArray<HTMLElement>(approach.querySelectorAll("[data-approach-detail]"));
-					const edge = approach.querySelector<HTMLElement>(".phase-edge i");
+					const supportingCopy = gsap.utils.toArray<HTMLElement>(approach.querySelectorAll(".thesis-copy [data-approach-detail]"));
+					const cards = gsap.utils.toArray<HTMLElement>(approach.querySelectorAll("[data-approach-card]"));
+					const cardSelectors = cards.map((card) => card.querySelector<HTMLButtonElement>("[data-approach-card-select]"));
+					const cardSurfaces = cards.map((card) => card.querySelector<HTMLElement>("[data-approach-card-surface]"));
+					const cardBodies = cards.map((card) => card.querySelector<HTMLElement>("[data-approach-card-body]"));
+					const cardMarks = cards.map((card) => card.querySelector<HTMLElement>(".capability-card__mark i:last-child"));
+					const availableCardBodies = cardBodies.filter((body): body is HTMLElement => body !== null);
+					const availableCardMarks = cardMarks.filter((mark): mark is HTMLElement => mark !== null);
+					const rangeProgress = approach.querySelector<HTMLElement>("[data-approach-progress]");
 
 					gsap.set(primary, { autoAlpha: 0, rotateX: 7, y: 70 });
-					gsap.set(detail, { autoAlpha: 0, y: 46 });
-					if (edge) gsap.set(edge, { scaleX: 0 });
+					gsap.set(supportingCopy, { autoAlpha: 0, y: 30 });
+					gsap.set(cards, {
+						"--card-active": 0,
+						"--card-hover": 0,
+						"--card-pointer-x": 50,
+						"--card-pointer-y": 50,
+						autoAlpha: 0,
+						scale: 0.97,
+						y: 42,
+					});
+					gsap.set(cardSurfaces.filter((surface): surface is HTMLElement => surface !== null), {
+						force3D: true,
+						rotationX: 0,
+						rotationY: 0,
+						transformOrigin: "center center",
+						transformPerspective: 1400,
+					});
+					gsap.set(availableCardBodies, { autoAlpha: 0, height: 0 });
+					gsap.set(availableCardMarks, { scaleY: 1, transformOrigin: "center" });
+					if (rangeProgress) gsap.set(rangeProgress, { scaleX: 0, transformOrigin: "left center" });
 
-					gsap.timeline({
+					if (window.matchMedia("(pointer: fine)").matches) {
+						cards.forEach((card, index) => {
+							const surface = cardSurfaces[index];
+							if (!surface) return;
+
+							const movePointerX = gsap.quickTo(card, "--card-pointer-x", { duration: 0.52, ease: "power3.out" });
+							const movePointerY = gsap.quickTo(card, "--card-pointer-y", { duration: 0.52, ease: "power3.out" });
+							const showPointer = gsap.quickTo(card, "--card-hover", { duration: 0.32, ease: "power2.out" });
+							const tiltCardX = gsap.quickTo(surface, "rotationX", { duration: 0.58, ease: "power3.out" });
+							const tiltCardY = gsap.quickTo(surface, "rotationY", { duration: 0.58, ease: "power3.out" });
+							let isHovering = false;
+							let pointerBounds = card.getBoundingClientRect();
+
+							const updatePointerTarget = (event: PointerEvent) => {
+								const relativeX = Math.min(1, Math.max(0, (event.clientX - pointerBounds.left) / pointerBounds.width));
+								const relativeY = Math.min(1, Math.max(0, (event.clientY - pointerBounds.top) / pointerBounds.height));
+								const centeredX = relativeX - 0.5;
+								const centeredY = relativeY - 0.5;
+								const activeAmount = Number.parseFloat(getComputedStyle(card).getPropertyValue("--card-active"));
+
+								movePointerX(relativeX * 100);
+								movePointerY(relativeY * 100);
+								tiltCardX(centeredY * -8);
+								tiltCardY(centeredX * 11);
+								showPointer(activeAmount >= 0.55 ? 1 : 0);
+							};
+
+							const handlePointerEnter = (event: PointerEvent) => {
+								isHovering = true;
+								pointerBounds = card.getBoundingClientRect();
+								updatePointerTarget(event);
+							};
+
+							const handlePointerMove = (event: PointerEvent) => {
+								if (!isHovering) return;
+								updatePointerTarget(event);
+							};
+
+							const handlePointerLeave = () => {
+								isHovering = false;
+								showPointer(0);
+								movePointerX(50);
+								movePointerY(50);
+								tiltCardX(0);
+								tiltCardY(0);
+							};
+
+							card.addEventListener("pointerenter", handlePointerEnter);
+							card.addEventListener("pointermove", handlePointerMove);
+							card.addEventListener("pointerleave", handlePointerLeave);
+							cardPointerCleanups.push(() => {
+								card.removeEventListener("pointerenter", handlePointerEnter);
+								card.removeEventListener("pointermove", handlePointerMove);
+								card.removeEventListener("pointerleave", handlePointerLeave);
+								gsap.killTweensOf(surface, ["rotationX", "rotationY"]);
+							});
+						});
+					}
+
+					const approachTimeline = gsap.timeline({
 						scrollTrigger: {
 							trigger: approach,
 							start: "top top",
-							end: () => `+=${Math.round(window.innerHeight * 2.1)}`,
+							end: () => `+=${Math.round(window.innerHeight * 3.8)}`,
 							pin: true,
-							scrub: 0.9,
+							scrub: 0.75,
+							snap: {
+								snapTo: "labelsDirectional",
+								duration: { min: 0.22, max: 0.5 },
+								delay: 0.1,
+								ease: "power2.inOut",
+							},
 							anticipatePin: 1,
 							invalidateOnRefresh: true,
 							...sceneCallbacks(root, approach),
+							onUpdate: (trigger) => {
+								const timeline = trigger.animation as gsap.core.Timeline | undefined;
+								if (!timeline) return;
+
+								const timelineTime = timeline.duration() * trigger.progress;
+								let activeIndex = -1;
+
+								cards.forEach((_, index) => {
+									const labelTime = timeline.labels[`capability-${index + 1}`];
+									if (labelTime !== undefined && timelineTime >= labelTime) activeIndex = index;
+								});
+
+								cardSelectors.forEach((selector, index) => {
+									selector?.setAttribute("aria-pressed", String(index === activeIndex));
+								});
+							},
 						},
-					})
-						.to(edge, { duration: 0.35, ease: "power2.out", scaleX: 1 })
-						.to(primary, { autoAlpha: 1, duration: 0.7, ease: "power3.out", rotateX: 0, stagger: 0.1, y: 0 }, 0.12)
-						.to(primary.at(-1) ?? primary, { duration: 0.45, ease: "power2.inOut", xPercent: -4 }, 0.74)
-						.to(detail, { autoAlpha: 1, duration: 0.7, ease: "power3.out", stagger: 0.12, y: 0 }, 0.72)
-						.to({}, { duration: 0.32 })
-						.to([...primary, ...detail], { autoAlpha: 0.2, duration: 0.42, ease: "power2.in", stagger: { each: 0.025, from: "end" }, y: -30 });
+					});
+
+					approachTimeline
+						.addLabel("approach-intro", 0)
+						.to(primary, { autoAlpha: 1, duration: 0.55, ease: "power3.out", rotateX: 0, stagger: 0.08, y: 0 }, 0)
+						.to(supportingCopy, { autoAlpha: 1, duration: 0.48, ease: "power3.out", stagger: 0.08, y: 0 }, 0.26)
+						.to(cards, { autoAlpha: 1, duration: 0.48, ease: "power3.out", scale: 1, stagger: 0.06, y: 0 }, 0.18);
+
+					cards.forEach((card, index) => {
+						const body = cardBodies[index];
+						const mark = cardMarks[index];
+						if (!body) return;
+
+						const previousCard = cards[index - 1];
+						const previousBody = cardBodies[index - 1];
+						const previousMark = cardMarks[index - 1];
+						const label = `capability-${index + 1}`;
+						const transitionStart = approachTimeline.duration();
+
+						if (previousCard && previousBody) {
+							approachTimeline
+								.to(previousBody, { autoAlpha: 0, duration: 0.28, ease: "power2.inOut", height: 0 }, transitionStart)
+								.to(previousCard, {
+									"--card-active": 0,
+									"--card-hover": 0,
+									duration: 0.3,
+									ease: "power2.inOut",
+									scale: 0.985,
+									x: 0,
+								}, transitionStart);
+							if (previousMark) {
+								approachTimeline.to(previousMark, { duration: 0.28, ease: "power2.inOut", scaleY: 1 }, transitionStart);
+							}
+						}
+
+						approachTimeline
+							.to(card, { "--card-active": 1, duration: 0.34, ease: "power2.inOut", scale: 1 }, transitionStart)
+							.to(body, { autoAlpha: 1, duration: 0.38, ease: "power3.out", height: "auto" }, transitionStart);
+						if (mark) {
+							approachTimeline.to(mark, { duration: 0.28, ease: "power2.inOut", scaleY: 0 }, transitionStart);
+						}
+						approachTimeline.addLabel(label);
+						approachTimeline.to({}, { duration: 0.36 });
+					});
+
+					approachTimeline.addLabel("approach-complete");
+					if (rangeProgress) {
+						const progressStart = approachTimeline.labels["capability-1"];
+						const progressEnd = approachTimeline.labels["approach-complete"];
+
+						approachTimeline.to(rangeProgress, {
+							scaleX: 1,
+							duration: progressEnd - progressStart,
+							ease: "none",
+						}, progressStart);
+					}
+
+					const documentElement = document.documentElement;
+					const initialScrollBehavior = documentElement.style.scrollBehavior;
+					let cardSelectionFrame: number | null = null;
+
+					cardSelectors.forEach((selector, index) => {
+						if (!selector) return;
+
+						const selectCard = () => {
+							const trigger = approachTimeline.scrollTrigger;
+							if (!trigger) return;
+
+							const labelTime = approachTimeline.labels[`capability-${index + 1}`];
+							const targetProgress = labelTime / approachTimeline.duration();
+							const scrollStart = Number(trigger.start);
+							const scrollEnd = Number(trigger.end);
+							const targetScroll = gsap.utils.clamp(
+								scrollStart + 1,
+								scrollEnd - 1,
+									scrollStart + (scrollEnd - scrollStart) * targetProgress,
+								);
+							const cancelSnap = () => {
+								const snapTween = trigger.getTween(true) as gsap.core.Tween | 0 | undefined;
+								if (snapTween && typeof snapTween.kill === "function") snapTween.kill();
+							};
+							const prepareSelectedCard = () => {
+								cancelSnap();
+								approachTimeline.totalProgress(targetProgress, false);
+							};
+							const settleSelectedCard = () => {
+								cancelSnap();
+								trigger.update();
+								trigger.getTween()?.progress(1);
+								approachTimeline.totalProgress(targetProgress, false);
+							};
+
+							if (cardSelectionFrame !== null) window.cancelAnimationFrame(cardSelectionFrame);
+							documentElement.style.scrollBehavior = "auto";
+							prepareSelectedCard();
+							window.scrollTo({
+								behavior: "auto",
+								top: targetScroll,
+							});
+							settleSelectedCard();
+
+							cardSelectionFrame = window.requestAnimationFrame(() => {
+								settleSelectedCard();
+								documentElement.style.scrollBehavior = initialScrollBehavior;
+								cardSelectionFrame = null;
+							});
+						};
+
+						selector.addEventListener("click", selectCard);
+						cardPointerCleanups.push(() => selector.removeEventListener("click", selectCard));
+					});
+					cardPointerCleanups.push(() => {
+						if (cardSelectionFrame !== null) window.cancelAnimationFrame(cardSelectionFrame);
+						documentElement.style.scrollBehavior = initialScrollBehavior;
+					});
 				}
 
 				const workIntro = root.querySelector<HTMLElement>("[data-scroll-scene='work-intro']");
@@ -443,6 +761,7 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 
 			return () => {
 				media.revert();
+				cardPointerCleanups.forEach((cleanup) => cleanup());
 				if (meshFrame !== null) window.cancelAnimationFrame(meshFrame);
 				heroSurface?.removeEventListener("pointermove", handleMeshPointer);
 				heroSurface?.removeEventListener("pointerleave", resetMesh);
