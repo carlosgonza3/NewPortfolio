@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { IdCard } from "lucide-react";
 import { usePathname } from "next/navigation";
 import type { MouseEvent } from "react";
 import { useEffect, useRef, useState } from "react";
@@ -87,9 +88,10 @@ export function Navigation() {
 				<Link href="/#about" aria-current={activeNavigation === "about" ? "page" : undefined}>About</Link>
 			</nav>
 			<div className="nav-tools">
-				<a className="nav-contact" href="mailto:hello@carlosgonzalez.dev">
-					<span className="nav-contact__label">Let&apos;s talk</span>
-					<span className="nav-contact__icon" aria-hidden="true">↗</span>
+				<a className="nav-contact" href="mailto:hello@carlosgonzalez.dev" aria-label="Let's talk">
+					<span className="nav-contact__label nav-contact__label--idle" aria-hidden="true">Questions?</span>
+					<span className="nav-contact__label nav-contact__label--active" aria-hidden="true">Let&apos;s talk</span>
+					<span className="nav-contact__icon" aria-hidden="true"><IdCard size={20} strokeWidth={1.7} /></span>
 				</a>
 				<ThemeToggle />
 			</div>
