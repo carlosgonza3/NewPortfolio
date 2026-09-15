@@ -303,8 +303,27 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 					const availableCardBodies = cardBodies.filter((body): body is HTMLElement => body !== null);
 					const availableCardMarks = cardMarks.filter((mark): mark is HTMLElement => mark !== null);
 					const rangeProgress = approach.querySelector<HTMLElement>("[data-approach-progress]");
+					const problemEmphasis = approach.querySelector<HTMLElement>("[data-approach-emphasis='problem']");
+					const productEmphasis = approach.querySelector<HTMLElement>("[data-approach-emphasis='product']");
+					const updateTitleEmphasis = (activeIndex: number) => {
+						problemEmphasis?.classList.toggle("is-emphasized", activeIndex === 0);
+						productEmphasis?.classList.toggle("is-emphasized", activeIndex === cards.length - 1);
+					};
+					const updateActiveCard = (activeIndex: number) => {
+						cardSelectors.forEach((selector, index) => {
+							selector?.setAttribute("aria-pressed", String(index === activeIndex));
+						});
+						updateTitleEmphasis(activeIndex);
+					};
 
-					gsap.set(primary, { autoAlpha: 0, rotateX: 7, y: 70 });
+					gsap.set(primary, {
+						autoAlpha: 0,
+						filter: "blur(10px)",
+						rotateX: 11,
+						scale: 0.975,
+						transformOrigin: "left bottom",
+						y: 92,
+					});
 					gsap.set(supportingCopy, { autoAlpha: 0, y: 30 });
 					gsap.set(cards, {
 						"--card-active": 0,
@@ -325,6 +344,41 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 					gsap.set(availableCardBodies, { autoAlpha: 0, height: 0 });
 					gsap.set(availableCardMarks, { scaleY: 1, transformOrigin: "center" });
 					if (rangeProgress) gsap.set(rangeProgress, { scaleX: 0, transformOrigin: "left center" });
+
+					gsap.timeline({
+						delay: 0.3,
+						scrollTrigger: {
+							trigger: approach,
+							start: "top 68%",
+							toggleActions: "play none none reverse",
+							invalidateOnRefresh: true,
+						},
+					})
+						.to(primary, {
+							autoAlpha: 1,
+							duration: 1.02,
+							ease: "power3.out",
+							filter: "blur(0px)",
+							rotateX: 0,
+							scale: 1,
+							stagger: 0.08,
+							y: 0,
+						}, 0)
+						.to(supportingCopy, {
+							autoAlpha: 1,
+							duration: 0.68,
+							ease: "power3.out",
+							stagger: 0.07,
+							y: 0,
+						}, 0.25)
+						.to(cards, {
+							autoAlpha: 1,
+							duration: 0.72,
+							ease: "power3.out",
+							scale: 1,
+							stagger: 0.065,
+							y: 0,
+						}, 0.34);
 
 					if (window.matchMedia("(pointer: fine)").matches) {
 						cards.forEach((card, index) => {
@@ -392,39 +446,15 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 							end: () => `+=${Math.round(window.innerHeight * 3.8)}`,
 							pin: true,
 							scrub: 0.75,
-							snap: {
-								snapTo: "labelsDirectional",
-								duration: { min: 0.22, max: 0.5 },
-								delay: 0.1,
-								ease: "power2.inOut",
-							},
 							anticipatePin: 1,
 							invalidateOnRefresh: true,
 							...sceneCallbacks(root, approach),
-							onUpdate: (trigger) => {
-								const timeline = trigger.animation as gsap.core.Timeline | undefined;
-								if (!timeline) return;
-
-								const timelineTime = timeline.duration() * trigger.progress;
-								let activeIndex = -1;
-
-								cards.forEach((_, index) => {
-									const labelTime = timeline.labels[`capability-${index + 1}`];
-									if (labelTime !== undefined && timelineTime >= labelTime) activeIndex = index;
-								});
-
-								cardSelectors.forEach((selector, index) => {
-									selector?.setAttribute("aria-pressed", String(index === activeIndex));
-								});
-							},
 						},
 					});
 
 					approachTimeline
 						.addLabel("approach-intro", 0)
-						.to(primary, { autoAlpha: 1, duration: 0.55, ease: "power3.out", rotateX: 0, stagger: 0.08, y: 0 }, 0)
-						.to(supportingCopy, { autoAlpha: 1, duration: 0.48, ease: "power3.out", stagger: 0.08, y: 0 }, 0.26)
-						.to(cards, { autoAlpha: 1, duration: 0.48, ease: "power3.out", scale: 1, stagger: 0.06, y: 0 }, 0.18);
+						.to({}, { duration: 0.18 });
 
 					cards.forEach((card, index) => {
 						const body = cardBodies[index];
@@ -436,6 +466,7 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 						const previousMark = cardMarks[index - 1];
 						const label = `capability-${index + 1}`;
 						const transitionStart = approachTimeline.duration();
+						approachTimeline.addLabel(`${label}-start`, transitionStart);
 
 						if (previousCard && previousBody) {
 							approachTimeline
@@ -463,6 +494,18 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 						approachTimeline.to({}, { duration: 0.36 });
 					});
 
+					approachTimeline.eventCallback("onUpdate", () => {
+						const timelineTime = approachTimeline.time();
+						let activeIndex = -1;
+
+						cards.forEach((_, index) => {
+							const labelTime = approachTimeline.labels[`capability-${index + 1}-start`];
+							if (labelTime !== undefined && timelineTime >= labelTime) activeIndex = index;
+						});
+
+						updateActiveCard(activeIndex);
+					});
+
 					approachTimeline.addLabel("approach-complete");
 					if (rangeProgress) {
 						const progressStart = approachTimeline.labels["capability-1"];
@@ -487,27 +530,24 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 							if (!trigger) return;
 
 							const labelTime = approachTimeline.labels[`capability-${index + 1}`];
-							const targetProgress = labelTime / approachTimeline.duration();
+							const targetTime = Math.min(labelTime + 0.001, approachTimeline.duration());
+							const targetProgress = targetTime / approachTimeline.duration();
 							const scrollStart = Number(trigger.start);
 							const scrollEnd = Number(trigger.end);
 							const targetScroll = gsap.utils.clamp(
 								scrollStart + 1,
 								scrollEnd - 1,
-									scrollStart + (scrollEnd - scrollStart) * targetProgress,
-								);
-							const cancelSnap = () => {
-								const snapTween = trigger.getTween(true) as gsap.core.Tween | 0 | undefined;
-								if (snapTween && typeof snapTween.kill === "function") snapTween.kill();
-							};
+								scrollStart + (scrollEnd - scrollStart) * targetProgress,
+							);
 							const prepareSelectedCard = () => {
-								cancelSnap();
 								approachTimeline.totalProgress(targetProgress, false);
+								updateActiveCard(index);
 							};
 							const settleSelectedCard = () => {
-								cancelSnap();
 								trigger.update();
 								trigger.getTween()?.progress(1);
 								approachTimeline.totalProgress(targetProgress, false);
+								updateActiveCard(index);
 							};
 
 							if (cardSelectionFrame !== null) window.cancelAnimationFrame(cardSelectionFrame);

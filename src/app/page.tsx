@@ -169,7 +169,9 @@ export default function Home() {
 				{/* How I work */}
 				<section className="thesis section-shell scroll-scene" data-phase-group="approach" data-scroll-scene="approach" id="approach">
 					<div className="thesis-copy">
-						<h2 data-approach-primary>I work from the problem all the way to the product.</h2>
+						<h2 data-approach-primary>
+							I work from the <span className="thesis-emphasis" data-approach-emphasis="problem">problem</span> all the way to the <span className="thesis-emphasis" data-approach-emphasis="product">product</span>.
+						</h2>
 						<p data-approach-detail>
 							My best work starts with understanding the problem and the workflow around it, then shaping the product with care for the interface people actually use.
 						</p>
