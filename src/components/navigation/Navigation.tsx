@@ -1,11 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import type { MouseEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ThemeToggle } from "@/components/navigation/ThemeToggle";
+
+type ActiveNavigation = "work" | "knowledge" | "about";
 
 export function Navigation() {
 	const navigationRef = useRef<HTMLElement>(null);
+	const returnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const pathname = usePathname();
+	const [activeNavigation, setActiveNavigation] = useState<ActiveNavigation>(pathname === "/knowledge" ? "knowledge" : "work");
 
 	useEffect(() => {
 		const navigation = navigationRef.current;
@@ -23,6 +30,15 @@ export function Navigation() {
 			if (isNearTop || scrollDelta < -2) navigation.classList.remove("is-hidden");
 			if (!isNearTop && scrollDelta > 3) navigation.classList.add("is-hidden");
 
+			if (pathname === "/knowledge") {
+				setActiveNavigation("knowledge");
+			} else if (pathname === "/") {
+				const about = document.querySelector<HTMLElement>("#about");
+				setActiveNavigation(about && about.getBoundingClientRect().top <= window.innerHeight * 0.45 ? "about" : "work");
+			} else {
+				setActiveNavigation("work");
+			}
+
 			previousScrollY = currentScrollY;
 			animationFrame = null;
 		};
@@ -38,22 +54,42 @@ export function Navigation() {
 		return () => {
 			window.removeEventListener("scroll", handleScroll);
 			if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
+			if (returnTimerRef.current) clearTimeout(returnTimerRef.current);
 		};
-	}, []);
+	}, [pathname]);
+
+	const handleHomeClick = (event: MouseEvent<HTMLAnchorElement>) => {
+		const wordmark = event.currentTarget;
+		wordmark.classList.remove("is-returning-home");
+		void wordmark.offsetWidth;
+		wordmark.classList.add("is-returning-home");
+
+		if (returnTimerRef.current) clearTimeout(returnTimerRef.current);
+		returnTimerRef.current = setTimeout(() => wordmark.classList.remove("is-returning-home"), 900);
+
+		if (pathname !== "/") return;
+		event.preventDefault();
+		window.history.replaceState(null, "", "/");
+		window.scrollTo({
+			behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+			top: 0,
+		});
+	};
 
 	return (
 		<header className="site-nav" ref={navigationRef}>
-			<Link className="wordmark" href="/" aria-label="Carlos Gonzalez, home">
-				CG<span>.</span>
+			<Link className="wordmark" href="/#main-content" aria-label="Carlos Gonzalez, return to home" onClick={handleHomeClick}>
+				<span className="wordmark__mark">CG<span>.</span></span>
 			</Link>
-			<nav aria-label="Main navigation">
-				<Link href="/#work">Work</Link>
-				<Link href="/knowledge">Knowledge</Link>
-				<Link href="/#about">About</Link>
+			<nav className="nav-pill" aria-label="Main navigation">
+				<Link href="/#work" aria-current={activeNavigation === "work" ? "page" : undefined}>Work</Link>
+				<Link href="/knowledge" aria-current={activeNavigation === "knowledge" ? "page" : undefined}>Knowledge</Link>
+				<Link href="/#about" aria-current={activeNavigation === "about" ? "page" : undefined}>About</Link>
 			</nav>
 			<div className="nav-tools">
 				<a className="nav-contact" href="mailto:hello@carlosgonzalez.dev">
-					Let&apos;s talk <span aria-hidden="true">↗</span>
+					<span className="nav-contact__label">Let&apos;s talk</span>
+					<span className="nav-contact__icon" aria-hidden="true">↗</span>
 				</a>
 				<ThemeToggle />
 			</div>

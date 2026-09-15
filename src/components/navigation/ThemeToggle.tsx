@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, KeyboardEvent, PointerEvent as ReactPointerEvent } from "react";
+import type { CSSProperties, KeyboardEvent } from "react";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { isPortfolioTheme, portfolioThemes, type PortfolioTheme } from "@/data/themes";
 
@@ -120,14 +120,8 @@ export function ThemeToggle() {
 		return () => navigation?.classList.remove("has-open-mood");
 	}, [isOpen]);
 
-	const cycleTheme = () => {
-		const currentIndex = portfolioThemes.findIndex(({ id }) => id === committedTheme.current);
-		commitTheme(portfolioThemes[(currentIndex + 1) % portfolioThemes.length].id);
-	};
-
-	const handlePointerEnter = (event: ReactPointerEvent<HTMLDivElement>) => {
+	const handlePointerEnter = () => {
 		clearCloseTimer();
-		if (event.pointerType !== "touch") setIsOpen(true);
 	};
 
 	const selectTheme = (theme: PortfolioTheme) => {
@@ -163,10 +157,10 @@ export function ThemeToggle() {
 				<button
 					className="mood-dial__rim"
 					type="button"
-					aria-label={isOpen ? "Close color mood selector" : "Switch to next mood"}
+					aria-label={isOpen ? "Close color mood selector" : "Open color mood selector"}
 					aria-expanded={isOpen}
 					tabIndex={-1}
-					onClick={() => (isOpen ? closeSelector() : cycleTheme())}
+					onClick={() => (isOpen ? closeSelector() : setIsOpen(true))}
 				/>
 
 				<div className="mood-dial__options" role="listbox" aria-label="Choose a page color mood">
@@ -184,12 +178,12 @@ export function ThemeToggle() {
 								className={`mood-dial__option${isActive ? " is-active" : ""}`}
 								key={theme.id}
 								role="option"
-								aria-label={isOpen ? theme.label : `${theme.label}. Switch to next mood.`}
+								aria-label={isOpen ? theme.label : `Open color mood selector. Current mood: ${theme.label}.`}
 								aria-selected={isActive}
 								tabIndex={isOpen || isActive ? 0 : -1}
 								style={position}
 								type="button"
-								onClick={() => (isOpen ? selectTheme(theme.id) : cycleTheme())}
+								onClick={() => (isOpen ? selectTheme(theme.id) : setIsOpen(true))}
 							>
 								<MoodIcon theme={theme.id} />
 							</button>
