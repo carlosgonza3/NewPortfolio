@@ -38,17 +38,12 @@ export default function Home() {
 							<span className="hero-line hero-line--light" data-hero-headline>Working products.</span>
 						</h1>
 						<p className="hero-intro" data-hero-intro>
-							I&apos;m Carlos. I build full-stack products across interfaces, APIs, data, and AI—and document the technical thinking behind them.
+							Hey I’m Carlos, a full-stack developer who enjoys turning ideas into products highly detailed, optimized and actually useful.
 						</p>
 						<div className="hero-actions" data-hero-actions>
 							<a className="button button--dark" href="#work">View selected work <span aria-hidden="true">↓</span></a>
 							<Link className="text-link" href="/knowledge">Explore the knowledge <span aria-hidden="true">↗</span></Link>
 						</div>
-					</div>
-
-					<div className="hero-index" data-hero-detail>
-						<span>Full-stack · Product · AI systems</span>
-						<a href="#work">Scroll to work <i aria-hidden="true">↓</i></a>
 					</div>
 				</section>
 

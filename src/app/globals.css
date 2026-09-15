@@ -128,6 +128,17 @@ a {
 	transform-style: preserve-3d;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+	html.has-js .hero [data-hero-headline],
+	html.has-js .hero [data-hero-intro],
+	html.has-js .hero [data-hero-actions],
+	html.has-js .hero [data-hero-detail],
+	html.has-js .phase-rail {
+		visibility: hidden;
+		opacity: 0;
+	}
+}
+
 .scroll-scene {
 	position: relative;
 	min-height: 100svh;

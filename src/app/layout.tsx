@@ -21,7 +21,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
 	return (
-		<html lang="en" data-scroll-behavior="smooth">
+		<html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
+			<head>
+				<script dangerouslySetInnerHTML={{ __html: `document.documentElement.classList.add("has-js");` }} />
+			</head>
 			<body>
 				<a className="skip-link" href="#main-content">
 					Skip to content
