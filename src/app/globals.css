@@ -1234,6 +1234,8 @@ html[data-theme="forest"] .hero-forest > span {
 	background-clip: text;
 	background-size: 240% 100%;
 	color: transparent;
+	margin-bottom: -0.14em;
+	padding-bottom: 0.14em;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	animation: hero-headline-flow 10s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
