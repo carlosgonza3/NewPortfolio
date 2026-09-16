@@ -151,7 +151,9 @@ export default function Home() {
 					</div>
 
 					{/* Hero Section */}
-					<div className="hero-grid-depth" aria-hidden="true" />
+					<div className="hero-grid-depth" aria-hidden="true">
+						<canvas className="hero-grid-canvas" />
+					</div>
 					<div className="hero-copy">
 						<h1>
 							<span className="hero-line" data-hero-headline>I turn technical ideas.</span>

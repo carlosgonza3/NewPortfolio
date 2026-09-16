@@ -40,8 +40,64 @@ const centerOffset = (element: HTMLElement, container: HTMLElement) => {
 	};
 };
 
+type HeroSpacePhase = {
+	mesh: {
+		backgroundX: number;
+		backgroundY: number;
+		rotateX: number;
+		rotateY: number;
+		scale: number;
+		x: number;
+		y: number;
+		z: number;
+	};
+	stars: Array<{ x: number; y: number }>;
+};
+
+const createSeededRandom = (seed: number) => {
+	let state = Math.max(1, seed % 2147483647);
+
+	return () => {
+		state = (state * 16807) % 2147483647;
+		return (state - 1) / 2147483646;
+	};
+};
+
+const createHeroSpacePhases = (seed: number, starDepths: number[]): HeroSpacePhase[] => {
+	const random = createSeededRandom(seed);
+	let travelX = (random() - 0.5) * 8;
+	let travelY = (random() - 0.5) * 6;
+
+	return Array.from({ length: 3 }, (_, phaseIndex) => {
+		if (phaseIndex > 0) {
+			const heading = random() * Math.PI * 2;
+			const distance = 30 + random() * 16;
+			travelX += Math.cos(heading) * distance;
+			travelY += Math.sin(heading) * distance * 0.78;
+		}
+
+		return {
+			mesh: {
+				backgroundX: travelX * 1.65,
+				backgroundY: travelY * 1.65,
+				rotateX: (random() - 0.5) * 7.2,
+				rotateY: (random() - 0.5) * 8.4,
+				scale: 1.04 + phaseIndex * 0.019 + random() * 0.014,
+				x: travelX * 0.62,
+				y: travelY * 0.54,
+				z: phaseIndex * 15 + random() * 5,
+			},
+			stars: starDepths.map((depth) => ({
+				x: travelX * depth * 1.18 + (random() - 0.5) * (phaseIndex === 0 ? 2 : 7),
+				y: travelY * depth * 1.12 + (random() - 0.5) * (phaseIndex === 0 ? 2 : 6),
+			})),
+		};
+	});
+};
+
 export function HomeExperience({ children }: { children: ReactNode }) {
 	const scope = useRef<HTMLDivElement>(null);
+	const spaceSeed = useRef<number | null>(null);
 
 	useGSAP(
 		() => {
@@ -58,9 +114,71 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				x: Number(element.dataset.starX ?? 0),
 				y: Number(element.dataset.starY ?? 0),
 			}));
+			if (spaceSeed.current === null) {
+				spaceSeed.current = window.crypto?.getRandomValues
+					? window.crypto.getRandomValues(new Uint32Array(1))[0]
+					: Math.floor(Math.random() * 2147483646) + 1;
+			}
+			const heroSpacePhases = createHeroSpacePhases(spaceSeed.current, stars.map(({ depth }) => depth));
+			const heroGrid = root.querySelector<HTMLElement>(".hero-grid-depth");
+			const heroGridCanvas = heroGrid?.querySelector<HTMLCanvasElement>(".hero-grid-canvas") ?? null;
+			const starElements = stars.map(({ element }) => element);
+			const meshPhaseVars = (phase: HeroSpacePhase) => ({
+				"--mesh-phase-bg-x": `${phase.mesh.backgroundX}px`,
+				"--mesh-phase-bg-y": `${phase.mesh.backgroundY}px`,
+				"--mesh-phase-rotate-x": `${phase.mesh.rotateX}deg`,
+				"--mesh-phase-rotate-y": `${phase.mesh.rotateY}deg`,
+				"--mesh-phase-scale": phase.mesh.scale,
+				"--mesh-phase-x": `${phase.mesh.x}px`,
+				"--mesh-phase-y": `${phase.mesh.y}px`,
+				"--mesh-phase-z": `${phase.mesh.z}px`,
+			});
+			const starPhaseVars = (phase: HeroSpacePhase) => ({
+				"--star-phase-x": (index: number) => `${phase.stars[index].x}px`,
+				"--star-phase-y": (index: number) => `${phase.stars[index].y}px`,
+			});
+			const setSpacePhase = (phase: HeroSpacePhase) => {
+				if (heroGrid) gsap.set(heroGrid, meshPhaseVars(phase));
+				gsap.set(starElements, starPhaseVars(phase));
+			};
+			const addSpaceMotion = (timeline: gsap.core.Timeline) => {
+				const [introduction, statement, actions] = heroSpacePhases;
+				if (heroGrid) {
+					timeline.fromTo(
+						heroGrid,
+						meshPhaseVars(introduction),
+						{ ...meshPhaseVars(statement), duration: 0.74, ease: "sine.inOut" },
+						"statement",
+					);
+					timeline.to(heroGrid, {
+						...meshPhaseVars(actions),
+						duration: 0.74,
+						ease: "sine.inOut",
+					}, "actions");
+				}
+				timeline.fromTo(
+					starElements,
+					starPhaseVars(introduction),
+					{ ...starPhaseVars(statement), duration: 0.7, ease: "sine.inOut" },
+					"statement",
+				);
+				timeline.to(starElements, {
+					...starPhaseVars(actions),
+					duration: 0.7,
+					ease: "sine.inOut",
+				}, "actions");
+			};
+			setSpacePhase(heroSpacePhases[0]);
+			if (heroSurface) heroSurface.dataset.spaceKey = spaceSeed.current.toString(36);
 			const supportsMeshInteraction = window.matchMedia("(pointer: fine) and (prefers-reduced-motion: no-preference)");
+			const allowsGridMotion = window.matchMedia("(prefers-reduced-motion: no-preference)");
 			let meshFrame: number | null = null;
+			let gridFrame: number | null = null;
 			let meshPointer: { x: number; y: number } | null = null;
+			let gridPointer = { strength: 0, x: 0.5, y: 0.5 };
+			let gridPointerTarget = { strength: 0, x: 0.5, y: 0.5 };
+			let gridResizeObserver: ResizeObserver | null = null;
+			let gridThemeObserver: MutationObserver | null = null;
 			let orbPosition = { x: 0.72, y: 0.38 };
 			let orbTarget = { x: 0.72, y: 0.38 };
 			let cloudNearPosition = { x: 0, y: 0 };
@@ -74,22 +192,103 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 			let sundownVioletPosition = { x: 0, y: 0 };
 			let sundownVioletTarget = { x: 0, y: 0 };
 
+			const drawHeroGrid = () => {
+				gridFrame = null;
+				if (!heroGrid || !heroGridCanvas) return;
+				const context = heroGridCanvas.getContext("2d");
+				if (!context) return;
+
+				gridPointer = {
+					strength: gridPointer.strength + (gridPointerTarget.strength - gridPointer.strength) * 0.12,
+					x: gridPointer.x + (gridPointerTarget.x - gridPointer.x) * 0.14,
+					y: gridPointer.y + (gridPointerTarget.y - gridPointer.y) * 0.14,
+				};
+
+				const width = heroGridCanvas.clientWidth;
+				const height = heroGridCanvas.clientHeight;
+				if (width === 0 || height === 0) return;
+				const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+				const expectedWidth = Math.round(width * pixelRatio);
+				const expectedHeight = Math.round(height * pixelRatio);
+				if (heroGridCanvas.width !== expectedWidth || heroGridCanvas.height !== expectedHeight) {
+					heroGridCanvas.width = expectedWidth;
+					heroGridCanvas.height = expectedHeight;
+				}
+				context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+				context.clearRect(0, 0, width, height);
+
+				const gridStyle = getComputedStyle(heroGrid);
+				const colorChannels = gridStyle
+					.getPropertyValue("--mood-grid-rgb")
+					.split(",")
+					.map((channel) => Number.parseFloat(channel.trim()));
+				const [red = 255, green = 255, blue = 255] = colorChannels;
+				const phaseOffsetX = Number.parseFloat(gridStyle.getPropertyValue("--mesh-phase-bg-x")) || 0;
+				const phaseOffsetY = Number.parseFloat(gridStyle.getPropertyValue("--mesh-phase-bg-y")) || 0;
+				const spacing = Math.min(160, Math.max(104, window.innerWidth * 0.09));
+				const sampleSize = 18;
+				const bendRadius = Math.min(210, Math.max(135, Math.min(width, height) * 0.22));
+				const bendStrength = 28 * gridPointer.strength;
+				const cursorX = gridPointer.x * width;
+				const cursorY = gridPointer.y * height;
+
+				const bendPoint = (x: number, y: number) => {
+					const deltaX = x - cursorX;
+					const deltaY = y - cursorY;
+					const distance = Math.hypot(deltaX, deltaY);
+					if (distance <= 0.01 || distance >= bendRadius || bendStrength <= 0.01) return { x, y };
+					const proximity = 1 - distance / bendRadius;
+					const falloff = proximity * proximity * (3 - 2 * proximity);
+					const displacement = bendStrength * falloff;
+
+					return {
+						x: x + (deltaX / distance) * displacement,
+						y: y + (deltaY / distance) * displacement,
+					};
+				};
+
+				context.lineWidth = 1;
+				context.strokeStyle = `rgba(${red}, ${green}, ${blue}, 0.058)`;
+
+				const startX = ((phaseOffsetX % spacing) + spacing) % spacing - spacing;
+				for (let x = startX; x <= width + spacing; x += spacing) {
+					context.beginPath();
+					for (let y = -sampleSize; y <= height + sampleSize; y += sampleSize) {
+						const point = bendPoint(x, y);
+						if (y === -sampleSize) context.moveTo(point.x, point.y);
+						else context.lineTo(point.x, point.y);
+					}
+					context.stroke();
+				}
+
+				const startY = ((phaseOffsetY % spacing) + spacing) % spacing - spacing;
+				for (let y = startY; y <= height + spacing; y += spacing) {
+					context.beginPath();
+					for (let x = -sampleSize; x <= width + sampleSize; x += sampleSize) {
+						const point = bendPoint(x, y);
+						if (x === -sampleSize) context.moveTo(point.x, point.y);
+						else context.lineTo(point.x, point.y);
+					}
+					context.stroke();
+				}
+
+				if (allowsGridMotion.matches) gridFrame = window.requestAnimationFrame(drawHeroGrid);
+			};
+
+			if (heroGrid && heroGridCanvas) {
+				gridResizeObserver = new ResizeObserver(() => {
+					if (!allowsGridMotion.matches && gridFrame === null) drawHeroGrid();
+				});
+				gridResizeObserver.observe(heroGrid);
+				gridThemeObserver = new MutationObserver(() => {
+					if (!allowsGridMotion.matches && gridFrame === null) drawHeroGrid();
+				});
+				gridThemeObserver.observe(document.documentElement, { attributeFilter: ["data-theme"], attributes: true });
+				drawHeroGrid();
+			}
+
 			const updateMesh = () => {
 				if (!heroSurface) return;
-
-				if (meshPointer) {
-					const { x, y } = meshPointer;
-					const normalizedX = x - 0.5;
-					const normalizedY = y - 0.5;
-
-					heroSurface.style.setProperty("--mesh-x", `${x * 100}%`);
-					heroSurface.style.setProperty("--mesh-y", `${y * 100}%`);
-					heroSurface.style.setProperty("--mesh-rotate-x", `${normalizedY * -1.4}deg`);
-					heroSurface.style.setProperty("--mesh-rotate-y", `${normalizedX * 1.8}deg`);
-					heroSurface.style.setProperty("--mesh-shift-x", `${normalizedX * 8}px`);
-					heroSurface.style.setProperty("--mesh-shift-y", `${normalizedY * 7}px`);
-
-				}
 
 				orbPosition = {
 					x: orbPosition.x + (orbTarget.x - orbPosition.x) * 0.055,
@@ -164,6 +363,14 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 					x: Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width)),
 					y: Math.min(1, Math.max(0, (event.clientY - bounds.top) / bounds.height)),
 				};
+				if (heroGridCanvas) {
+					const gridBounds = heroGridCanvas.getBoundingClientRect();
+					gridPointerTarget = {
+						strength: 1,
+						x: Math.min(1, Math.max(0, (event.clientX - gridBounds.left) / gridBounds.width)),
+						y: Math.min(1, Math.max(0, (event.clientY - gridBounds.top) / gridBounds.height)),
+					};
+				}
 				orbTarget = {
 					x: 0.72 + (meshPointer.x - 0.5) * 0.14,
 					y: 0.38 + (meshPointer.y - 0.5) * 0.1,
@@ -195,18 +402,13 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 			const resetMesh = () => {
 				if (!heroSurface) return;
 				meshPointer = null;
+				gridPointerTarget = { ...gridPointerTarget, strength: 0 };
 				orbTarget = { x: 0.72, y: 0.38 };
 				cloudNearTarget = { x: 0, y: 0 };
 				cloudFarTarget = { x: 0, y: 0 };
 				sundownWarmTarget = { x: 0, y: 0 };
 				sundownRoseTarget = { x: 0, y: 0 };
 				sundownVioletTarget = { x: 0, y: 0 };
-				heroSurface.style.setProperty("--mesh-x", "50%");
-				heroSurface.style.setProperty("--mesh-y", "50%");
-				heroSurface.style.setProperty("--mesh-rotate-x", "0deg");
-				heroSurface.style.setProperty("--mesh-rotate-y", "0deg");
-				heroSurface.style.setProperty("--mesh-shift-x", "0px");
-				heroSurface.style.setProperty("--mesh-shift-y", "0px");
 				stars.forEach((star) => {
 					star.element.style.setProperty("--star-cursor-glow", "0");
 					star.element.style.setProperty("--star-peak", `${star.peak}`);
@@ -257,37 +459,35 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 					if (actions) gsap.set(actions, { autoAlpha: 0, y: 24 });
 					gsap.set(details, { autoAlpha: 0, y: 18 });
 
-					gsap.timeline({
-						defaults: { ease: "power3.out" },
+					const heroTimeline = gsap.timeline({
+						defaults: { ease: "sine.inOut" },
 						scrollTrigger: {
 							trigger: hero,
 							start: "top top",
-							end: () => `+=${Math.round(window.innerHeight * 1.55)}`,
+							end: () => `+=${Math.round(window.innerHeight * 2.25)}`,
 							pin: true,
-							scrub: 0.75,
-							snap: {
-								snapTo: "labelsDirectional",
-								duration: { min: 0.2, max: 0.42 },
-								delay: 0.08,
-								ease: "power2.inOut",
-							},
+							scrub: 0.9,
 							anticipatePin: 1,
 							invalidateOnRefresh: true,
 							...sceneCallbacks(root, hero),
+							onUpdate: ({ progress }) => {
+								if (progress <= 0.001) setSpacePhase(heroSpacePhases[0]);
+							},
 						},
 					})
 						.addLabel("introduction", 0)
-						.to({}, { duration: 0.14 })
+						.to({}, { duration: 0.24 })
 						.addLabel("statement")
-						.to(intro, { duration: 0.48, scale: 1, x: 0, y: 0 }, "statement")
-						.to(headline, { autoAlpha: 1, duration: 0.5, rotateX: 0, stagger: 0.07, y: 0 }, "statement+=0.04")
-						.to({}, { duration: 0.12 })
+						.to(intro, { duration: 0.72, scale: 1, x: 0, y: 0 }, "statement")
+						.to(headline, { autoAlpha: 1, duration: 0.78, rotateX: 0, stagger: 0.09, y: 0 }, "statement+=0.06")
+						.to({}, { duration: 0.28 })
 						.addLabel("actions")
-						.to(actions, { autoAlpha: 1, duration: 0.34, y: 0 }, "actions")
-						.to(details, { autoAlpha: 1, duration: 0.3, stagger: 0.06, y: 0 }, "actions+=0.05")
-						.to(rail, { autoAlpha: 1, duration: 0.28, x: 0 }, "actions+=0.08")
-						.to({}, { duration: 0.16 })
+						.to(actions, { autoAlpha: 1, duration: 0.64, y: 0 }, "actions")
+						.to(details, { autoAlpha: 1, duration: 0.56, stagger: 0.08, y: 0 }, "actions+=0.08")
+						.to(rail, { autoAlpha: 1, duration: 0.48, x: 0 }, "actions+=0.14")
+						.to({}, { duration: 0.5 })
 						.addLabel("complete");
+					addSpaceMotion(heroTimeline);
 
 				}
 
@@ -743,36 +943,34 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 					if (intro) gsap.set(intro, { autoAlpha: 1, scale: 1.04, x: introStart.x, y: introStart.y });
 					if (actions) gsap.set(actions, { autoAlpha: 0, y: 24 });
 					gsap.set(details, { autoAlpha: 0, y: 18 });
-					gsap.timeline({
-						defaults: { ease: "power3.out" },
+					const heroTimeline = gsap.timeline({
+						defaults: { ease: "sine.inOut" },
 						scrollTrigger: {
 							trigger: hero,
 							start: "top top",
-							end: () => `+=${Math.round(window.innerHeight * 1.35)}`,
+							end: () => `+=${Math.round(window.innerHeight * 1.9)}`,
 							pin: true,
-							scrub: 0.7,
-							snap: {
-								snapTo: "labelsDirectional",
-								duration: { min: 0.18, max: 0.36 },
-								delay: 0.06,
-								ease: "power2.inOut",
-							},
+							scrub: 0.78,
 							anticipatePin: 1,
 							invalidateOnRefresh: true,
 							...sceneCallbacks(root, hero),
+							onUpdate: ({ progress }) => {
+								if (progress <= 0.001) setSpacePhase(heroSpacePhases[0]);
+							},
 						},
 					})
 						.addLabel("introduction", 0)
-						.to({}, { duration: 0.12 })
+						.to({}, { duration: 0.2 })
 						.addLabel("statement")
-						.to(intro, { duration: 0.44, scale: 1, x: 0, y: 0 }, "statement")
-						.to(headline, { autoAlpha: 1, duration: 0.46, stagger: 0.06, y: 0 }, "statement+=0.04")
-						.to({}, { duration: 0.1 })
+						.to(intro, { duration: 0.6, scale: 1, x: 0, y: 0 }, "statement")
+						.to(headline, { autoAlpha: 1, duration: 0.64, stagger: 0.08, y: 0 }, "statement+=0.05")
+						.to({}, { duration: 0.2 })
 						.addLabel("actions")
-						.to(actions, { autoAlpha: 1, duration: 0.32, y: 0 }, "actions")
-						.to(details, { autoAlpha: 1, duration: 0.28, y: 0 }, "actions+=0.05")
-						.to({}, { duration: 0.14 })
+						.to(actions, { autoAlpha: 1, duration: 0.52, y: 0 }, "actions")
+						.to(details, { autoAlpha: 1, duration: 0.46, y: 0 }, "actions+=0.07")
+						.to({}, { duration: 0.38 })
 						.addLabel("complete");
+					addSpaceMotion(heroTimeline);
 				}
 
 				scenes.forEach((scene) => {
@@ -803,6 +1001,9 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				media.revert();
 				cardPointerCleanups.forEach((cleanup) => cleanup());
 				if (meshFrame !== null) window.cancelAnimationFrame(meshFrame);
+				if (gridFrame !== null) window.cancelAnimationFrame(gridFrame);
+				gridResizeObserver?.disconnect();
+				gridThemeObserver?.disconnect();
 				heroSurface?.removeEventListener("pointermove", handleMeshPointer);
 				heroSurface?.removeEventListener("pointerleave", resetMesh);
 			};

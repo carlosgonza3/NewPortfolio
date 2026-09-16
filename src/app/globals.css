@@ -1028,6 +1028,14 @@ a {
 .hero {
 	--orb-x: 72%;
 	--orb-y: 38%;
+	--mesh-phase-bg-x: 0px;
+	--mesh-phase-bg-y: 0px;
+	--mesh-phase-rotate-x: 0deg;
+	--mesh-phase-rotate-y: 0deg;
+	--mesh-phase-scale: 1.04;
+	--mesh-phase-x: 0px;
+	--mesh-phase-y: 0px;
+	--mesh-phase-z: 0px;
 	--cloud-near-x: 0px;
 	--cloud-near-y: 0px;
 	--cloud-far-x: 0px;
@@ -1038,12 +1046,6 @@ a {
 	--sundown-rose-y: 0px;
 	--sundown-violet-x: 0px;
 	--sundown-violet-y: 0px;
-	--mesh-rotate-x: 0deg;
-	--mesh-rotate-y: 0deg;
-	--mesh-shift-x: 0px;
-	--mesh-shift-y: 0px;
-	--mesh-x: 50%;
-	--mesh-y: 50%;
 	position: relative;
 	display: flex;
 	align-items: center;
@@ -1054,20 +1056,6 @@ a {
 	color: var(--hero-foreground);
 	isolation: isolate;
 	transition: background-color 520ms cubic-bezier(0.22, 1, 0.36, 1), color 420ms ease;
-}
-
-.hero::before {
-	position: absolute;
-	z-index: 0;
-	inset: 0;
-	background-image:
-		linear-gradient(rgba(var(--mood-base-grid-rgb), 0.028) 1px, transparent 1px),
-		linear-gradient(90deg, rgba(var(--mood-base-grid-rgb), 0.028) 1px, transparent 1px);
-	background-position: center;
-	background-size: clamp(6.5rem, 9vw, 10rem) clamp(6.5rem, 9vw, 10rem);
-	content: "";
-	mask-image: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.45) 62%, transparent 100%);
-	pointer-events: none;
 }
 
 .hero-orb {
@@ -1247,6 +1235,8 @@ html[data-theme="light"] .hero-daylight__accent {
 }
 
 .hero-stars span {
+	--star-phase-x: 0px;
+	--star-phase-y: 0px;
 	position: absolute;
 	top: var(--star-y);
 	left: var(--star-x);
@@ -1256,7 +1246,9 @@ html[data-theme="light"] .hero-daylight__accent {
 	background: #d9e8ff;
 	box-shadow: 0 0 5px rgba(139, 183, 255, 0.52);
 	opacity: 0;
-	translate: var(--star-parallax-x) var(--star-parallax-y);
+	translate:
+		calc(var(--star-parallax-x) + var(--star-phase-x))
+		calc(var(--star-parallax-y) + var(--star-phase-y));
 	animation: star-twinkle var(--star-duration) ease-in-out var(--star-delay) infinite;
 	animation-play-state: paused;
 	transition: translate 520ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -1600,17 +1592,29 @@ html[data-theme="forest"] .hero-forest > span {
 	position: absolute;
 	z-index: 1;
 	inset: -8%;
-	background-image:
-		linear-gradient(rgba(var(--mood-grid-rgb), 0.075) 1px, transparent 1px),
-		linear-gradient(90deg, rgba(var(--mood-grid-rgb), 0.075) 1px, transparent 1px);
-	background-position: center;
-	background-size: clamp(6.5rem, 9vw, 10rem) clamp(6.5rem, 9vw, 10rem);
-	mask-image: radial-gradient(circle 16rem at var(--mesh-x) var(--mesh-y), black 0%, rgba(0, 0, 0, 0.48) 40%, transparent 76%);
+	-webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.82) 0%, black 18%, rgba(0, 0, 0, 0.72) 82%, transparent 100%);
+	mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.82) 0%, black 18%, rgba(0, 0, 0, 0.72) 82%, transparent 100%);
 	pointer-events: none;
-	transform: perspective(900px) translate3d(var(--mesh-shift-x), var(--mesh-shift-y), 0) rotateX(var(--mesh-rotate-x)) rotateY(var(--mesh-rotate-y)) scale(1.04);
-	transform-origin: var(--mesh-x) var(--mesh-y);
-	transition: transform 180ms ease-out;
-	will-change: mask-position, transform;
+	transform:
+		perspective(900px)
+		translate3d(
+			var(--mesh-phase-x),
+			var(--mesh-phase-y),
+			var(--mesh-phase-z)
+		)
+		rotateX(var(--mesh-phase-rotate-x))
+		rotateY(var(--mesh-phase-rotate-y))
+		scale(var(--mesh-phase-scale));
+	transform-origin: center;
+	transition:
+		transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+	will-change: transform;
+}
+
+.hero-grid-canvas {
+	display: block;
+	width: 100%;
+	height: 100%;
 }
 
 @keyframes hero-orb-drift {
@@ -3717,12 +3721,6 @@ html:not([data-theme="light"]) .project-logo__asset--dark-surface {
 	}
 }
 
-@media (pointer: coarse) {
-	.hero-grid-depth {
-		display: none;
-	}
-}
-
 @media (prefers-reduced-motion: reduce) {
 	html {
 		scroll-behavior: auto;
@@ -3758,7 +3756,7 @@ html:not([data-theme="light"]) .project-logo__asset--dark-surface {
 	}
 
 	.hero-grid-depth {
-		display: none;
+		transform: none !important;
 	}
 
 	html[data-theme="dark"] .hero-stars span {
