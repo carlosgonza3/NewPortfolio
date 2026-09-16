@@ -227,18 +227,18 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 
 				const rail = root.querySelector<HTMLElement>(".phase-rail");
 				const railProgress = root.querySelector<HTMLElement>(".phase-rail__track i");
-				const flow = root.querySelector<HTMLElement>(".continuous-flow");
 
 				if (rail) gsap.set(rail, { autoAlpha: 0, x: 14 });
-				if (railProgress && flow) {
+				if (railProgress) {
 					gsap.set(railProgress, { scaleY: 0 });
 					gsap.to(railProgress, {
 						ease: "none",
 						scaleY: 1,
 						scrollTrigger: {
-							trigger: flow,
-							start: "top top",
-							end: "bottom bottom",
+							start: 0,
+							end: "max",
+							invalidateOnRefresh: true,
+							refreshPriority: -100,
 							scrub: 0.35,
 						},
 					});

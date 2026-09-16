@@ -220,9 +220,7 @@ export default function Home() {
 							key={project.id}
 							style={{ "--project-accent": project.accent } as CSSProperties}
 						>
-							<div className="phase-edge" aria-hidden="true"><span>Project 0{index + 1}</span><i /></div>
 							<div className="project-story__copy">
-								<div className="project-number" data-project-copy><span>0{index + 1}</span><span>{project.year}</span></div>
 								<p className="eyebrow" data-project-copy>{project.kicker}</p>
 								<h3 data-project-copy>{project.name}</h3>
 								<p className="project-summary" data-project-copy>{project.summary}</p>
