@@ -71,6 +71,7 @@ export function ThemeToggle() {
 	const committedTheme = useRef<PortfolioTheme>("dark");
 	const [isOpen, setIsOpen] = useState(false);
 	const currentTheme = useSyncExternalStore<PortfolioTheme>(subscribeToTheme, getThemeSnapshot, () => "dark");
+	const currentThemeOption = portfolioThemes.find(({ id }) => id === currentTheme) ?? portfolioThemes[0];
 
 	const clearCloseTimer = () => {
 		if (!closeTimer.current) return;
@@ -129,6 +130,12 @@ export function ThemeToggle() {
 		setIsOpen(false);
 	};
 
+	const cycleTheme = () => {
+		const currentIndex = portfolioThemes.findIndex(({ id }) => id === currentTheme);
+		const nextIndex = (currentIndex + 1) % portfolioThemes.length;
+		commitTheme(portfolioThemes[nextIndex].id);
+	};
+
 	const handleKeys = (event: KeyboardEvent<HTMLDivElement>) => {
 		if (event.key === "Escape") {
 			event.preventDefault();
@@ -167,9 +174,10 @@ export function ThemeToggle() {
 					{portfolioThemes.map((theme, index) => {
 						const angle = index * wheelSegment - 90;
 						const position = {
-							"--mood-option-x": `${50 + Math.cos((angle * Math.PI) / 180) * 33}%`,
-							"--mood-option-y": `${50 + Math.sin((angle * Math.PI) / 180) * 33}%`,
+							"--mood-option-x": `${50 + Math.cos((angle * Math.PI) / 180) * 34.5}%`,
+							"--mood-option-y": `${50 + Math.sin((angle * Math.PI) / 180) * 34.5}%`,
 							"--mood-option-delay": `${index * 24}ms`,
+							"--mood-option-color": theme.swatch,
 						} as CSSProperties;
 						const isActive = theme.id === currentTheme;
 
@@ -190,6 +198,17 @@ export function ThemeToggle() {
 						);
 					})}
 				</div>
+
+				<button
+					className="mood-dial__current"
+					type="button"
+					aria-label={`Current mood: ${currentThemeOption.label}. Switch to the next mood.`}
+					tabIndex={isOpen ? 0 : -1}
+					style={{ "--mood-current-color": currentThemeOption.swatch } as CSSProperties}
+					onClick={cycleTheme}
+				>
+					<MoodIcon theme={currentTheme} />
+				</button>
 			</div>
 		</div>
 	);

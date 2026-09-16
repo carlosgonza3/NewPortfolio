@@ -5,10 +5,16 @@ export interface Project {
 	slug: string;
 	name: string;
 	kicker: string;
+	logo?: {
+		darkSurface: string;
+		lightSurface: string;
+		scale?: number;
+	};
 	summary: string;
 	description: string;
 	status: ProjectStatus;
 	featured: boolean;
+	featuredOrder?: number;
 	year: number;
 	role: string;
 	technologies: string[];

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { HomeExperience } from "@/components/home/HomeExperience";
@@ -214,14 +215,45 @@ export default function Home() {
 				<section className="work" id="work" data-phase-group="work">
 					{featuredProjects.map((project, index) => (
 						<article
-							className="project-story scroll-scene"
+							className={`project-story scroll-scene${index % 2 === 1 ? " project-story--reverse" : ""}`}
 							data-phase-group="work"
 							data-scroll-scene="project"
 							key={project.id}
 							style={{ "--project-accent": project.accent } as CSSProperties}
 						>
 							<div className="project-story__copy">
-								<p className="eyebrow" data-project-copy>{project.kicker}</p>
+								<div className="project-story__meta" data-project-copy>
+									{project.logo ? (
+										<div
+											className="project-logo"
+											role="img"
+											aria-label={`${project.name} logo`}
+											style={{ "--project-logo-scale": project.logo.scale ?? 1 } as CSSProperties}
+										>
+											<Image
+												alt=""
+												aria-hidden="true"
+												className="project-logo__asset project-logo__asset--light-surface"
+												height={60}
+												src={project.logo.lightSurface}
+												width={200}
+											/>
+											<Image
+												alt=""
+												aria-hidden="true"
+												className="project-logo__asset project-logo__asset--dark-surface"
+												height={60}
+												src={project.logo.darkSurface}
+												width={200}
+											/>
+										</div>
+									) : (
+										<p className="eyebrow">{project.kicker}</p>
+									)}
+									{project.status === "active" ? (
+										<span className="project-status"><i aria-hidden="true" />In active development</span>
+									) : null}
+								</div>
 								<h3 data-project-copy>{project.name}</h3>
 								<p className="project-summary" data-project-copy>{project.summary}</p>
 								<ul className="tag-list" data-project-copy aria-label="Technologies">
