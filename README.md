@@ -18,6 +18,16 @@ npm run validate
 npm run build
 ```
 
+## Development preview
+
+Pushes to `main` deploy a static development preview to GitHub Pages. In the
+repository settings, choose **GitHub Actions** as the Pages source once; the
+workflow will publish subsequent changes automatically.
+
+The preview build uses the repository name as its URL prefix. Normal builds do
+not use that prefix or static-export mode, so a later Netlify deployment can
+serve the site from the purchased domain at its root.
+
 ## Content
 
 - Projects: `src/data/projects.ts`

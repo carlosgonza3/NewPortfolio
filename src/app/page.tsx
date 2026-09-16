@@ -6,6 +6,7 @@ import { ProjectVisual } from "@/components/projects/ProjectVisual";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { approachCapabilities } from "@/data/profile";
 import { featuredProjects } from "@/data/projects";
+import { assetPath } from "@/lib/asset-path";
 
 const heroStars = Array.from({ length: 58 }, (_, index) => ({
 	x: (index * 47 + (index % 7) * 13) % 100,
@@ -237,7 +238,7 @@ export default function Home() {
 												aria-hidden="true"
 												className="project-logo__asset project-logo__asset--light-surface"
 												height={60}
-												src={project.logo.lightSurface}
+												src={assetPath(project.logo.lightSurface)}
 												width={200}
 											/>
 											<Image
@@ -245,7 +246,7 @@ export default function Home() {
 												aria-hidden="true"
 												className="project-logo__asset project-logo__asset--dark-surface"
 												height={60}
-												src={project.logo.darkSurface}
+												src={assetPath(project.logo.darkSurface)}
 												width={200}
 											/>
 										</div>
