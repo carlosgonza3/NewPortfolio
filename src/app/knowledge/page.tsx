@@ -11,14 +11,16 @@ export default function KnowledgePage() {
 		<main className="knowledge-page" id="main-content">
 			<header className="knowledge-page__intro">
 				<div>
-					<p className="eyebrow">The developer knowledge system</p>
-					<h1>Ideas become<br /><span>evidence.</span></h1>
+					<p className="section-index">03 / Knowledge system</p>
+					<p className="eyebrow">Beyond a list of skills</p>
+					<h1>See how the ideas<br /><span>connect.</span></h1>
 				</div>
-				<p>
-					An explorable map of where concepts came from, how they connect, and the projects where they became real.
-				</p>
+				<div className="knowledge-page__statement">
+					<p>Courses become concepts. Concepts shape technical decisions. Projects become proof.</p>
+					<a href="#knowledge-graph">Explore the knowledge graph <span aria-hidden="true">↗</span></a>
+				</div>
 			</header>
-			<KnowledgeGraph />
+			<div id="knowledge-graph"><KnowledgeGraph /></div>
 		</main>
 	);
 }

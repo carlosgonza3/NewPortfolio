@@ -90,7 +90,7 @@ export function Navigation() {
 				<span className="wordmark__mark">CG<span>.</span></span>
 			</Link>
 			<nav className="nav-pill" aria-label="Main navigation">
-				<Link href="/#work" aria-current={activeNavigation === "work" ? "page" : undefined}>Work</Link>
+				<Link href="/" aria-current={activeNavigation === "work" ? "page" : undefined}>Work</Link>
 				<Link href="/knowledge" aria-current={activeNavigation === "knowledge" ? "page" : undefined}>Knowledge</Link>
 				<Link href="/#about" aria-current={activeNavigation === "about" ? "page" : undefined}>About</Link>
 			</nav>

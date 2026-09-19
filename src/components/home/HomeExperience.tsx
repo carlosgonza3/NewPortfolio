@@ -423,6 +423,78 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				heroSurface.addEventListener("pointerleave", resetMesh);
 			}
 
+			const setupFreelanceSequence = (freelance: HTMLElement, endMultiplier: number) => {
+				const copy = gsap.utils.toArray<HTMLElement>(freelance.querySelectorAll("[data-freelance-copy] > *"));
+				const grid = freelance.querySelector<HTMLElement>("[data-freelance-grid]");
+				const edge = freelance.querySelector<HTMLElement>(".phase-edge i");
+				let previousSequenceKey = "";
+
+				if (!grid) return () => undefined;
+				const cardCount = grid.querySelectorAll("[data-freelance-card]").length;
+				if (!cardCount) return () => undefined;
+
+				const updateSequence = (progress: number) => {
+					const completionStart = 0.84;
+					const sequenceProgress = gsap.utils.clamp(0, 0.9999, progress / completionStart);
+					const activeIndex = Math.min(cardCount - 1, Math.floor(sequenceProgress * cardCount));
+					// Hand focus directly to the next card: its entrance and the
+					// previous card's contraction share one uninterrupted transition.
+					const isComplete = progress >= completionStart;
+					const isExpanded = progress > 0.002 && !isComplete;
+					const detail = {
+						isComplete,
+						activeIndex: isExpanded ? activeIndex : null,
+						revealedCount: activeIndex + 1,
+					};
+					const sequenceKey = `${detail.revealedCount}:${detail.activeIndex ?? "closed"}`;
+
+					if (sequenceKey === previousSequenceKey) return;
+					previousSequenceKey = sequenceKey;
+					grid.dispatchEvent(new CustomEvent("freelance-sequence", { detail }));
+				};
+
+				gsap.set(copy, { autoAlpha: 1, rotateX: 0, y: 0 });
+				if (edge) gsap.set(edge, { scaleX: 0 });
+				updateSequence(0);
+
+				// Bring the first, closed card across the viewport before the
+				// pinned sequence expands it on the first scroll into the scene.
+				gsap.fromTo(grid,
+					{ autoAlpha: 0, x: () => -window.innerWidth },
+					{
+						autoAlpha: 1,
+						x: 0,
+						ease: "power3.out",
+						scrollTrigger: {
+							trigger: freelance,
+							start: "top 85%",
+							end: "top top",
+							scrub: 0.6,
+							invalidateOnRefresh: true,
+						},
+					},
+				);
+
+				gsap.timeline({
+					scrollTrigger: {
+						trigger: freelance,
+						start: "top top",
+						end: () => `+=${Math.round(window.innerHeight * endMultiplier)}`,
+						pin: true,
+						scrub: 0.72,
+						anticipatePin: 1,
+						invalidateOnRefresh: true,
+						...sceneCallbacks(root, freelance),
+						onUpdate: ({ progress }) => updateSequence(progress),
+					},
+				})
+					.to(edge, { duration: 0.24, ease: "power2.out", scaleX: 1 })
+					.to(copy, { autoAlpha: 1, duration: 0.62, ease: "power3.out", rotateX: 0, stagger: 0.1, y: 0 }, 0.08)
+					.to({}, { duration: 5.2 });
+
+				return () => grid.dispatchEvent(new CustomEvent("freelance-sequence-reset"));
+			};
+
 			media.add("(min-width: 981px) and (prefers-reduced-motion: no-preference)", () => {
 				root.classList.add("is-continuous-ready");
 				activatePhase(root, "hero");
@@ -876,6 +948,9 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 						.to([...copy, ...(graph ? [graph] : [])], { autoAlpha: 0.18, duration: 0.44, ease: "power2.in", stagger: { each: 0.025, from: "end" }, y: -34 });
 				}
 
+				const freelance = root.querySelector<HTMLElement>("[data-scroll-scene='freelance']");
+				const resetFreelanceSequence = freelance ? setupFreelanceSequence(freelance, 8.2) : () => undefined;
+
 				const about = root.querySelector<HTMLElement>("[data-scroll-scene='about']");
 				if (about) {
 					const copy = gsap.utils.toArray<HTMLElement>(about.querySelectorAll("[data-about-copy]"));
@@ -908,6 +983,7 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				ScrollTrigger.refresh();
 
 				return () => {
+					resetFreelanceSequence();
 					root.classList.remove("is-continuous-ready");
 					activatePhase(root, "hero");
 				};
@@ -917,6 +993,8 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				root.classList.add("is-continuous-ready");
 				const scenes = gsap.utils.toArray<HTMLElement>(root.querySelectorAll("[data-scroll-scene]"));
 				const hero = root.querySelector<HTMLElement>("[data-scroll-scene='hero']");
+				const freelance = root.querySelector<HTMLElement>("[data-scroll-scene='freelance']");
+				const resetFreelanceSequence = freelance ? setupFreelanceSequence(freelance, 7.4) : () => undefined;
 				const revealSelector = [
 					"[data-hero-headline]",
 					"[data-hero-actions]",
@@ -974,7 +1052,7 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				}
 
 				scenes.forEach((scene) => {
-					if (scene.dataset.scrollScene === "hero") return;
+					if (scene.dataset.scrollScene === "hero" || scene.dataset.scrollScene === "freelance") return;
 					const items = gsap.utils.toArray<HTMLElement>(scene.querySelectorAll(revealSelector));
 					if (!items.length) return;
 
@@ -994,7 +1072,10 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 						.to(items, { autoAlpha: 0.18, duration: 0.35, ease: "power2.in", stagger: { each: 0.025, from: "end" }, y: -28 });
 				});
 
-				return () => root.classList.remove("is-continuous-ready");
+				return () => {
+					resetFreelanceSequence();
+					root.classList.remove("is-continuous-ready");
+				};
 			});
 
 			return () => {
