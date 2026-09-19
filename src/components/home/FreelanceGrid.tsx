@@ -104,7 +104,10 @@ export function FreelanceGrid({ projects }: { projects: FreelanceProject[] }) {
 		const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
 		const updateVideoPlayback = () => {
 			gridRef.current?.querySelectorAll("video").forEach((video) => {
-				if (motionPreference.matches) {
+				const card = video.closest("[data-freelance-card]");
+				const shouldPlay = !motionPreference.matches && card?.classList.contains("is-active");
+
+				if (!shouldPlay) {
 					video.pause();
 					return;
 				}
@@ -129,11 +132,13 @@ export function FreelanceGrid({ projects }: { projects: FreelanceProject[] }) {
 			{projects.map((project, index) => {
 				const isActive = project.id === activeId;
 				const isRevealed = !sequence.enabled || index < sequence.revealedCount;
+				const isAdjacent = activeIndex >= 0 && Math.abs(index - activeIndex) === 1;
+				const isCollapsed = activeIndex >= 0 && !isActive && !isAdjacent;
 
 				return (
 					<article
 						aria-hidden={!isRevealed}
-						className={`freelance-card${isActive ? " is-active" : ""}${isRevealed ? " is-revealed" : ""}`}
+						className={`freelance-card${isActive ? " is-active" : ""}${isAdjacent ? " is-adjacent" : ""}${isCollapsed ? " is-collapsed" : ""}${isRevealed ? " is-revealed" : ""}`}
 						data-freelance-card
 						key={project.id}
 						style={{
@@ -173,8 +178,8 @@ export function FreelanceGrid({ projects }: { projects: FreelanceProject[] }) {
 							</span>
 						</button>
 						<div className="freelance-card__expanded-media" aria-hidden="true">
-							{isActive && project.videoPath ? (
-								<video autoPlay loop muted playsInline preload="metadata" src={project.videoPath} />
+							{project.videoPath ? (
+								<video loop muted playsInline preload="metadata" src={project.videoPath} />
 							) : (
 								<span className="freelance-card__video-placeholder">
 									<Play fill="currentColor" size={18} />

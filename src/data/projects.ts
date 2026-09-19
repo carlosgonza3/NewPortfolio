@@ -10,6 +10,7 @@ export const projects: Project[] = [
 			darkSurface: "/brands/studyblocks/logo-white.svg",
 			lightSurface: "/brands/studyblocks/logo.svg",
 		},
+		videoPath: "/media/studyblocks-ai-showcase.webm",
 		summary: "Transforming course material into structured, interactive study experiences using AI.",
 		description:
 			"A learning platform that turns dense academic material into navigable blocks of knowledge, connecting concepts, practice, and progress in one system.",
@@ -33,6 +34,7 @@ export const projects: Project[] = [
 			lightSurface: "/brands/surveynest/logo-bird.png",
 			scale: 1.2,
 		},
+		videoPath: "/media/survey-nest.webm",
 		summary: "A collaborative survey platform built to make response data useful at a glance.",
 		description:
 			"A team-built product spanning survey creation, response collection, metrics, and visual analysis with a responsive React interface.",
@@ -56,6 +58,7 @@ export const projects: Project[] = [
 			lightSurface: "/brands/forno/logo-red.png",
 			scale: 1.35,
 		},
+		videoPath: "/media/forno-showcase.webm",
 		summary: "Operational software for restaurants, from protected files to intelligent workflows.",
 		description:
 			"A professional SaaS platform shaped around real restaurant operations, with dashboards, access-controlled storage, file processing, and AI-assisted features.",

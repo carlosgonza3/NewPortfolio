@@ -10,6 +10,7 @@ export interface Project {
 		lightSurface: string;
 		scale?: number;
 	};
+	videoPath: string;
 	summary: string;
 	description: string;
 	status: ProjectStatus;

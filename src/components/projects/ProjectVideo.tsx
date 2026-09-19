@@ -41,7 +41,7 @@ export function ProjectVideo({ src }: { src: string }) {
 				preload="metadata"
 				ref={videoRef}
 			>
-				<source src={src} type="video/mp4" />
+				<source src={src} />
 			</video>
 			<a
 				aria-label="Demo video made using Raylight"
