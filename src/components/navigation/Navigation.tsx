@@ -95,7 +95,17 @@ export function Navigation() {
 					<span className="wordmark__mark">CG<span>.</span></span>
 				</button>
 				<nav className={`wordmark-menu__panel${isWordmarkMenuOpen ? " is-open" : ""}`} id="wordmark-site-menu" aria-label="Site menu">
-					<Link href="/" onClick={handleHomeClick}>Home</Link>
+					<Link className="wordmark-menu__desktop-link" href="/" onClick={handleHomeClick}>Home</Link>
+					<Link className="wordmark-menu__mobile-link" href="/" onClick={handleHomeClick}>Work</Link>
+					<Link
+						aria-current={pathname === "/knowledge" ? "page" : undefined}
+						className="wordmark-menu__mobile-link"
+						href="/knowledge"
+						onClick={handlePrimaryNavigation}
+						scroll={false}
+					>
+						Knowledge
+					</Link>
 					<Link href="/about" aria-current={pathname === "/about" ? "page" : undefined} onClick={handlePrimaryNavigation}>About</Link>
 				</nav>
 			</div>

@@ -492,6 +492,10 @@ a {
 	color: white;
 }
 
+.wordmark-menu__mobile-link {
+	display: none;
+}
+
 .wordmark-menu:hover,
 .wordmark-menu:focus-within {
 	border-color: color-mix(in srgb, var(--accent) 40%, transparent);
@@ -4122,9 +4126,29 @@ html[data-theme="light"] .freelance-card {
 }
 
 @media (max-width: 980px) {
+	.freelance-grid {
+		--freelance-mobile-grid-gap: clamp(0.65rem, 1.8vw, 1rem);
+		--freelance-mobile-sequence-height: clamp(24rem, 60vw, 31rem);
+	}
+
 	.freelance-card,
 	.freelance-grid.has-active-card .freelance-card {
 		height: clamp(24rem, 60vw, 31rem);
+	}
+
+	.freelance-grid.is-scroll-sequenced.is-sequence-complete {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--freelance-mobile-grid-gap);
+	}
+
+	.freelance-grid.is-scroll-sequenced.is-sequence-complete .freelance-card.is-revealed {
+		align-self: stretch;
+		width: 100%;
+		max-width: none;
+		height: calc((var(--freelance-mobile-sequence-height) - var(--freelance-mobile-grid-gap)) / 2);
+		margin: 0;
+		transform: none;
 	}
 
 	.capability-card__select {
@@ -4184,7 +4208,11 @@ html[data-theme="light"] .freelance-card {
 	.project-story,
 	.project-story--reverse {
 		grid-template-columns: 1fr;
-		min-height: auto;
+		min-height: 100svh;
+	}
+
+	.home-experience.is-continuous-ready .project-story:last-child {
+		padding-bottom: clamp(8rem, 16vw, 11rem);
 	}
 
 	.project-story--reverse .project-story__copy,
@@ -4233,6 +4261,7 @@ html[data-theme="light"] .freelance-card {
 
 	.freelance-grid,
 	.freelance-grid.has-active-card {
+		--freelance-mobile-sequence-height: clamp(28rem, 125vw, 36rem);
 		display: grid;
 		grid-template-columns: 1fr;
 	}
@@ -4311,6 +4340,34 @@ html[data-theme="light"] .freelance-card {
 	.site-nav {
 		grid-template-columns: 1fr auto;
 		padding: 0.85rem var(--gutter);
+	}
+
+	.wordmark-menu {
+		z-index: 5;
+	}
+
+	.wordmark-menu.is-open {
+		width: min(20rem, calc(100vw - (var(--gutter) * 2)));
+	}
+
+	.wordmark-menu__panel {
+		justify-content: space-evenly;
+		flex: 1 1 auto;
+		gap: 0;
+		min-width: 0;
+	}
+
+	.wordmark-menu__panel a {
+		padding-inline: clamp(0.42rem, 2.2vw, 0.78rem);
+		font-size: clamp(0.58rem, 2.15vw, 0.68rem);
+	}
+
+	.wordmark-menu__desktop-link {
+		display: none;
+	}
+
+	.wordmark-menu__mobile-link {
+		display: block;
 	}
 
 	.nav-pill {

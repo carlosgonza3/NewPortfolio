@@ -963,9 +963,10 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 			media.add("(max-width: 980px) and (prefers-reduced-motion: no-preference)", () => {
 				root.classList.add("is-continuous-ready");
 				const scenes = gsap.utils.toArray<HTMLElement>(root.querySelectorAll("[data-scroll-scene]"));
+				const projects = gsap.utils.toArray<HTMLElement>(root.querySelectorAll("[data-scroll-scene='project']"));
 				const hero = root.querySelector<HTMLElement>("[data-scroll-scene='hero']");
 				const freelance = root.querySelector<HTMLElement>("[data-scroll-scene='freelance']");
-				const resetFreelanceSequence = freelance ? setupFreelanceSequence(freelance, 7.4) : () => undefined;
+				let resetFreelanceSequence: () => void = () => undefined;
 				const revealSelector = [
 					"[data-hero-headline]",
 					"[data-hero-actions]",
@@ -1021,7 +1022,11 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				}
 
 				scenes.forEach((scene) => {
-					if (scene.dataset.scrollScene === "hero" || scene.dataset.scrollScene === "freelance") return;
+					if (
+						scene.dataset.scrollScene === "hero"
+						|| scene.dataset.scrollScene === "project"
+						|| scene.dataset.scrollScene === "freelance"
+					) return;
 					const items = gsap.utils.toArray<HTMLElement>(scene.querySelectorAll(revealSelector));
 					if (!items.length) return;
 
@@ -1040,6 +1045,37 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 						.to(items, { autoAlpha: 1, duration: 0.32 })
 						.to(items, { autoAlpha: 0.18, duration: 0.35, ease: "power2.in", stagger: { each: 0.025, from: "end" }, y: -28 });
 				});
+
+				projects.forEach((project) => {
+					const items = gsap.utils.toArray<HTMLElement>(project.querySelectorAll("[data-project-copy], [data-project-media]"));
+					if (!items.length) return;
+
+					gsap.set(items, { autoAlpha: 0, rotateX: 4, y: 36 });
+					gsap.timeline({
+						scrollTrigger: {
+							trigger: project,
+							start: "top 90%",
+							end: "top 42%",
+							invalidateOnRefresh: true,
+							scrub: 0.65,
+							...sceneCallbacks(root, project),
+						},
+					}).to(items, {
+						autoAlpha: 1,
+						duration: 1,
+						ease: "power3.out",
+						rotateX: 0,
+						stagger: 0.055,
+						y: 0,
+					});
+				});
+
+				// Register the final pinned scene only after every preceding mobile
+				// trigger. Otherwise its start can be measured before the hero's pin
+				// spacing exists, causing freelance to cover the final project early.
+				resetFreelanceSequence = freelance ? setupFreelanceSequence(freelance, 7.4) : () => undefined;
+				ScrollTrigger.sort();
+				ScrollTrigger.refresh();
 
 				return () => {
 					resetFreelanceSequence();
