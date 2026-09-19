@@ -75,7 +75,6 @@ export default function Home() {
 					<span data-phase-dot="approach">Approach</span>
 					<span data-phase-dot="work">Work</span>
 					<span data-phase-dot="freelance">Websites</span>
-					<span data-phase-dot="about">About</span>
 				</div>
 			</div>
 
@@ -355,27 +354,6 @@ export default function Home() {
 						<FreelanceGrid projects={freelanceProjects} />
 					</div>
 				</section>
-
-				{/* About Me */}
-				<section className="about section-shell scroll-scene" id="about" data-phase-group="about" data-scroll-scene="about">
-					<div className="phase-edge" aria-hidden="true"><span>Phase 04</span><i /></div>
-					<p className="section-index" data-about-copy>04 / About</p>
-					<div className="about-heading">
-						<p className="eyebrow" data-about-copy>Engineer · collaborator · perpetual student</p>
-						<h2 data-about-copy>I care about the invisible decisions that make software feel obvious.</h2>
-					</div>
-					<div className="about-body">
-						<p data-about-detail>
-							My work moves between frontend craft, backend architecture, and intelligent systems. I like understanding how a system works all the way down—then making that understanding useful to someone else.
-						</p>
-						<div className="about-meta" data-about-detail>
-							<div><span>Based in</span><strong>Toronto, Canada</strong></div>
-							<div><span>Focused on</span><strong>Software engineering</strong></div>
-							<div><span>Current mode</span><strong>Building & learning</strong></div>
-						</div>
-					</div>
-				</section>
-
 			</main>
 		</HomeExperience>
 	);

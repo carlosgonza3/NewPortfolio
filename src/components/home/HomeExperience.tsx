@@ -951,35 +951,6 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				const freelance = root.querySelector<HTMLElement>("[data-scroll-scene='freelance']");
 				const resetFreelanceSequence = freelance ? setupFreelanceSequence(freelance, 8.2) : () => undefined;
 
-				const about = root.querySelector<HTMLElement>("[data-scroll-scene='about']");
-				if (about) {
-					const copy = gsap.utils.toArray<HTMLElement>(about.querySelectorAll("[data-about-copy]"));
-					const details = gsap.utils.toArray<HTMLElement>(about.querySelectorAll("[data-about-detail]"));
-					const edge = about.querySelector<HTMLElement>(".phase-edge i");
-
-					gsap.set(copy, { autoAlpha: 0, rotateX: 7, y: 68 });
-					gsap.set(details, { autoAlpha: 0, y: 48 });
-					if (edge) gsap.set(edge, { scaleX: 0 });
-
-					gsap.timeline({
-						scrollTrigger: {
-							trigger: about,
-							start: "top top",
-							end: () => `+=${Math.round(window.innerHeight * 2.05)}`,
-							pin: true,
-							scrub: 0.9,
-							anticipatePin: 1,
-							invalidateOnRefresh: true,
-							...sceneCallbacks(root, about),
-						},
-					})
-						.to(edge, { duration: 0.3, ease: "power2.out", scaleX: 1 })
-						.to(copy, { autoAlpha: 1, duration: 0.72, ease: "power3.out", rotateX: 0, stagger: 0.12, y: 0 }, 0.1)
-						.to(copy.at(-1) ?? copy, { duration: 0.52, ease: "power2.inOut", xPercent: -3 }, 0.82)
-						.to(details, { autoAlpha: 1, duration: 0.72, ease: "power3.out", stagger: 0.14, y: 0 }, 0.8)
-						.to({}, { duration: 0.4 });
-				}
-
 				ScrollTrigger.refresh();
 
 				return () => {
@@ -1006,8 +977,6 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 					"[data-project-media]",
 					"[data-knowledge-copy]",
 					"[data-knowledge-graph]",
-					"[data-about-copy]",
-					"[data-about-detail]",
 				].join(",");
 
 				if (hero) {

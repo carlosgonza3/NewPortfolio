@@ -2,19 +2,17 @@
 
 import Link from "next/link";
 import { IdCard } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import type { MouseEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { ThemeToggle } from "@/components/navigation/ThemeToggle";
 
-type ActiveNavigation = "work" | "knowledge" | "about";
-
 export function Navigation() {
 	const navigationRef = useRef<HTMLElement>(null);
-	const returnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const wordmarkMenuRef = useRef<HTMLDivElement>(null);
 	const pathname = usePathname();
-	const router = useRouter();
-	const [activeNavigation, setActiveNavigation] = useState<ActiveNavigation>(pathname === "/knowledge" ? "knowledge" : "work");
+	const [isWordmarkMenuOpen, setIsWordmarkMenuOpen] = useState(false);
+	const activeNavigation = pathname === "/knowledge" ? "knowledge" : pathname === "/" ? "work" : null;
 
 	useEffect(() => {
 		const navigation = navigationRef.current;
@@ -32,15 +30,6 @@ export function Navigation() {
 			if (isNearTop || scrollDelta < -2) navigation.classList.remove("is-hidden");
 			if (!isNearTop && scrollDelta > 3) navigation.classList.add("is-hidden");
 
-			if (pathname === "/knowledge") {
-				setActiveNavigation("knowledge");
-			} else if (pathname === "/") {
-				const about = document.querySelector<HTMLElement>("#about");
-				setActiveNavigation(about && about.getBoundingClientRect().top <= window.innerHeight * 0.45 ? "about" : "work");
-			} else {
-				setActiveNavigation("work");
-			}
-
 			previousScrollY = currentScrollY;
 			animationFrame = null;
 		};
@@ -56,43 +45,63 @@ export function Navigation() {
 		return () => {
 			window.removeEventListener("scroll", handleScroll);
 			if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
-			if (returnTimerRef.current) clearTimeout(returnTimerRef.current);
 		};
 	}, [pathname]);
 
-	const handleWordmarkClick = (event: MouseEvent<HTMLAnchorElement>) => {
+	useEffect(() => {
+		if (!isWordmarkMenuOpen) return;
+
+		const closeOnOutsidePress = (event: PointerEvent) => {
+			if (!wordmarkMenuRef.current?.contains(event.target as Node)) setIsWordmarkMenuOpen(false);
+		};
+		const closeOnEscape = (event: KeyboardEvent) => {
+			if (event.key === "Escape") setIsWordmarkMenuOpen(false);
+		};
+
+		document.addEventListener("pointerdown", closeOnOutsidePress);
+		window.addEventListener("keydown", closeOnEscape);
+		return () => {
+			document.removeEventListener("pointerdown", closeOnOutsidePress);
+			window.removeEventListener("keydown", closeOnEscape);
+		};
+	}, [isWordmarkMenuOpen]);
+
+	const handleHomeClick = (event: MouseEvent<HTMLAnchorElement>) => {
+		setIsWordmarkMenuOpen(false);
+		if (pathname !== "/") return;
+
 		event.preventDefault();
-		const wordmark = event.currentTarget;
-		wordmark.classList.remove("is-returning-home");
-		void wordmark.offsetWidth;
-		wordmark.classList.add("is-returning-home");
+		window.scrollTo({
+			behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+			top: 0,
+		});
+	};
 
-		if (returnTimerRef.current) clearTimeout(returnTimerRef.current);
-		const reloadDelay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 260;
-		returnTimerRef.current = setTimeout(() => {
-			if (pathname === "/") {
-				window.location.reload();
-				return;
-			}
-
-			router.push("/", { scroll: true });
-		}, reloadDelay);
+	const handlePrimaryNavigation = () => {
+		setIsWordmarkMenuOpen(false);
 	};
 
 	return (
-		<header className="site-nav" ref={navigationRef}>
-			<Link
-				className="wordmark"
-				href="/"
-				aria-label={pathname === "/" ? "Reload the homepage" : "Go to the homepage"}
-				onClick={handleWordmarkClick}
-			>
-				<span className="wordmark__mark">CG<span>.</span></span>
-			</Link>
+		<header className={`site-nav${isWordmarkMenuOpen ? " has-open-wordmark" : ""}`} ref={navigationRef}>
+			<div className={`wordmark-menu${isWordmarkMenuOpen ? " is-open" : ""}`} ref={wordmarkMenuRef}>
+				<button
+					aria-controls="wordmark-site-menu"
+					aria-expanded={isWordmarkMenuOpen}
+					aria-label={isWordmarkMenuOpen ? "Close site menu" : "Open site menu"}
+					className="wordmark"
+					onClick={() => setIsWordmarkMenuOpen((current) => !current)}
+					type="button"
+				>
+					<span className="wordmark__mark">CG<span>.</span></span>
+				</button>
+				<nav className={`wordmark-menu__panel${isWordmarkMenuOpen ? " is-open" : ""}`} id="wordmark-site-menu" aria-label="Site menu">
+					<Link href="/" onClick={handleHomeClick}>Home</Link>
+					<Link href="/about" aria-current={pathname === "/about" ? "page" : undefined} onClick={handlePrimaryNavigation}>About</Link>
+				</nav>
+			</div>
 			<nav className="nav-pill" aria-label="Main navigation">
-				<Link href="/" aria-current={activeNavigation === "work" ? "page" : undefined}>Work</Link>
-				<Link href="/knowledge" aria-current={activeNavigation === "knowledge" ? "page" : undefined}>Knowledge</Link>
-				<Link href="/#about" aria-current={activeNavigation === "about" ? "page" : undefined}>About</Link>
+				<Link href="/" aria-current={activeNavigation === "work" ? "page" : undefined} onClick={handleHomeClick} scroll>Work</Link>
+				<Link href="/knowledge" aria-current={activeNavigation === "knowledge" ? "page" : undefined} onClick={handlePrimaryNavigation} scroll={false}>Knowledge</Link>
 			</nav>
 			<div className="nav-tools">
 				<a className="nav-contact" href="mailto:hello@carlosgonzalez.dev" aria-label="Let's talk">

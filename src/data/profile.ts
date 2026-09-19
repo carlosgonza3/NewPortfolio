@@ -38,3 +38,15 @@ export const approachCapabilities: ApproachCapability[] = [
 			"I test the complete product, fix what feels unfinished, and prepare it for release without leaving behind half-done work.",
 	},
 ];
+
+export const aboutProfile = {
+	description:
+		"My work moves between frontend craft, backend architecture, and intelligent systems. I like understanding how a system works all the way down—then making that understanding useful to someone else.",
+	eyebrow: "Engineer · collaborator · perpetual student",
+	meta: [
+		{ label: "Based in", value: "Toronto, Canada" },
+		{ label: "Focused on", value: "Software engineering" },
+		{ label: "Current mode", value: "Building & learning" },
+	],
+	title: "I care about the invisible decisions that make software feel obvious.",
+} as const;
