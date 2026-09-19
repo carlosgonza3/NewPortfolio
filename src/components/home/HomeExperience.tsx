@@ -423,7 +423,11 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				heroSurface.addEventListener("pointerleave", resetMesh);
 			}
 
-			const setupFreelanceSequence = (freelance: HTMLElement, endMultiplier: number) => {
+			const setupFreelanceSequence = (
+				freelance: HTMLElement,
+				endMultiplier: number,
+				options: { keepCardsPresent?: boolean; finishOnLastCard?: boolean } = {},
+			) => {
 				const copy = gsap.utils.toArray<HTMLElement>(freelance.querySelectorAll("[data-freelance-copy] > *"));
 				const grid = freelance.querySelector<HTMLElement>("[data-freelance-grid]");
 				const edge = freelance.querySelector<HTMLElement>(".phase-edge i");
@@ -440,11 +444,16 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 					// Hand focus directly to the next card: its entrance and the
 					// previous card's contraction share one uninterrupted transition.
 					const isComplete = progress >= completionStart;
-					const isExpanded = progress > 0.002 && !isComplete;
+					const isExpanded = options.keepCardsPresent || (progress > 0.002 && !isComplete);
+					const sequenceActiveIndex = options.finishOnLastCard && isComplete
+						? cardCount - 1
+						: isExpanded && !isComplete
+							? activeIndex
+							: null;
 					const detail = {
 						isComplete,
-						activeIndex: isExpanded ? activeIndex : null,
-						revealedCount: activeIndex + 1,
+						activeIndex: sequenceActiveIndex,
+						revealedCount: options.keepCardsPresent ? cardCount : activeIndex + 1,
 					};
 					const sequenceKey = `${detail.revealedCount}:${detail.activeIndex ?? "closed"}`;
 
@@ -457,23 +466,27 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				if (edge) gsap.set(edge, { scaleX: 0 });
 				updateSequence(0);
 
-				// Bring the first, closed card across the viewport before the
-				// pinned sequence expands it on the first scroll into the scene.
-				gsap.fromTo(grid,
-					{ autoAlpha: 0, x: () => -window.innerWidth },
-					{
-						autoAlpha: 1,
-						x: 0,
-						ease: "power3.out",
-						scrollTrigger: {
-							trigger: freelance,
-							start: "top 85%",
-							end: "top top",
-							scrub: 0.6,
-							invalidateOnRefresh: true,
+				// Desktop keeps the full accordion present from its first frame;
+				// smaller layouts retain the existing scene entrance treatment.
+				if (options.keepCardsPresent) {
+					gsap.set(grid, { autoAlpha: 1, x: 0 });
+				} else {
+					gsap.fromTo(grid,
+						{ autoAlpha: 0, x: () => -window.innerWidth },
+						{
+							autoAlpha: 1,
+							x: 0,
+							ease: "power3.out",
+							scrollTrigger: {
+								trigger: freelance,
+								start: "top 85%",
+								end: "top top",
+								scrub: 0.6,
+								invalidateOnRefresh: true,
+							},
 						},
-					},
-				);
+					);
+				}
 
 				gsap.timeline({
 					scrollTrigger: {
@@ -949,7 +962,9 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				}
 
 				const freelance = root.querySelector<HTMLElement>("[data-scroll-scene='freelance']");
-				const resetFreelanceSequence = freelance ? setupFreelanceSequence(freelance, 8.2) : () => undefined;
+				const resetFreelanceSequence = freelance
+					? setupFreelanceSequence(freelance, 6.8, { finishOnLastCard: true, keepCardsPresent: true })
+					: () => undefined;
 
 				ScrollTrigger.refresh();
 

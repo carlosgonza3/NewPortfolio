@@ -1,26 +1,11 @@
 import type { Metadata } from "next";
-import { KnowledgeGraph } from "@/components/knowledge/KnowledgeGraph";
+import { KnowledgeComingSoon } from "@/components/knowledge/KnowledgeComingSoon";
 
 export const metadata: Metadata = {
-	title: "Knowledge System",
-	description: "Explore the courses, concepts, technologies, and projects behind Carlos Gonzalez's work.",
+	title: "Knowledge System — Coming Soon",
+	description: "A living map of the ideas, tools, and decisions behind Carlos Gonzalez's work is coming soon.",
 };
 
-export default function KnowledgePage() {
-	return (
-		<main className="knowledge-page" id="main-content">
-			<header className="knowledge-page__intro">
-				<div>
-					<p className="section-index">03 / Knowledge system</p>
-					<p className="eyebrow">Beyond a list of skills</p>
-					<h1>See how the ideas<br /><span>connect.</span></h1>
-				</div>
-				<div className="knowledge-page__statement">
-					<p>Courses become concepts. Concepts shape technical decisions. Projects become proof.</p>
-					<a href="#knowledge-graph">Explore the knowledge graph <span aria-hidden="true">↗</span></a>
-				</div>
-			</header>
-			<div id="knowledge-graph"><KnowledgeGraph /></div>
-		</main>
-	);
+export default function KnowledgeRoute() {
+	return <KnowledgeComingSoon />;
 }

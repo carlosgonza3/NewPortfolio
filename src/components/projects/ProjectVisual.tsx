@@ -6,7 +6,7 @@ export function ProjectVisual({ project }: { project: Project }) {
 	if (project.slug === "studyblocks-ai") {
 		return (
 			<div className="project-visual project-visual--study">
-				<ProjectVideo src={assetPath("/media/studyblocks-ai-showcase.mp4")} />
+				<ProjectVideo src={assetPath(project.videoPath)} />
 			</div>
 		);
 	}
@@ -14,14 +14,14 @@ export function ProjectVisual({ project }: { project: Project }) {
 	if (project.slug === "surveynest") {
 		return (
 			<div className="project-visual project-visual--survey">
-				<ProjectVideo src={assetPath("/media/suurveynest-demo-new.mp4")} />
+				<ProjectVideo src={assetPath(project.videoPath)} />
 			</div>
 		);
 	}
 
 	return (
 		<div className="project-visual project-visual--forno">
-			<ProjectVideo src={assetPath("/media/forno-showcase.mp4")} />
+			<ProjectVideo src={assetPath(project.videoPath)} />
 		</div>
 	);
 }

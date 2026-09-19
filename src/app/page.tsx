@@ -188,11 +188,11 @@ export default function Home() {
 						<h2 data-approach-primary>
 							I work from the <span className="thesis-emphasis" data-approach-emphasis="problem">problem</span> all the way to the <span className="thesis-emphasis" data-approach-emphasis="product">product</span>.
 						</h2>
-						<p data-approach-detail>
-							My best work starts with understanding the problem and the workflow around it, then shaping the product with care for the interface people actually use.
-						</p>
+						{/*<p data-approach-detail>*/}
+						{/*	My best work starts with understanding the problem and the workflow around it, then shaping the product with care for the interface people actually use.*/}
+						{/*</p>*/}
 						<div className="thesis-range" data-approach-detail aria-hidden="true">
-							<span>Requirements</span><i><b data-approach-progress /></i><span>Release</span>
+							<span></span><i><b data-approach-progress /></i><span></span>
 						</div>
 					</div>
 					<ol className="capability-stack" data-approach-detail aria-label="How I work across a product">

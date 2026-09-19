@@ -1,0 +1,8 @@
+# Local and editor files
+.idea
+*.log
+*.tsbuildinfo
+
+# Only optimized WebM videos are deployed.
+public/media/*.mov
+public/media/*.mp4

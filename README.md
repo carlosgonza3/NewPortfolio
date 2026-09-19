@@ -18,15 +18,25 @@ npm run validate
 npm run build
 ```
 
-## Development preview
+## Vercel preview
 
-Pushes to `main` deploy a static development preview to GitHub Pages. In the
-repository settings, choose **GitHub Actions** as the Pages source once; the
-workflow will publish subsequent changes automatically.
+The project is configured for Vercel's native Next.js runtime. Vercel uses
+Node.js 22 and runs validation before every preview or production build.
 
-The preview build uses the repository name as its URL prefix. Normal builds do
-not use that prefix or static-export mode, so a later Netlify deployment can
-serve the site from the purchased domain at its root.
+To create the first hosted test:
+
+1. Import the GitHub repository into Vercel.
+2. Keep the detected **Next.js** framework preset and repository root.
+3. Create a preview deployment from the current feature branch.
+4. Test the generated preview URL before promoting or merging to production.
+
+No output-directory override or static-export environment variable is needed
+on Vercel. Optimized WebM assets are included; superseded source videos are
+excluded from the deployment package to keep it comfortably below hosting
+limits.
+
+The existing GitHub Pages workflow remains available as a static development
+preview until the Vercel project is ready to become the primary host.
 
 ## Content
 
