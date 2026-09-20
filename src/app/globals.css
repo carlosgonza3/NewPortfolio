@@ -2823,7 +2823,8 @@ html[data-theme="dark"] .freelance-stars span {
 }
 
 .freelance-grid.is-scroll-sequenced:not(.has-active-card) .freelance-card.is-revealed {
-	max-width: 48%;
+	flex: 1 1 0;
+	max-width: 100%;
 }
 
 .freelance-grid.is-scroll-sequenced .freelance-card {
@@ -2851,9 +2852,14 @@ html[data-theme="dark"] .freelance-stars span {
 	opacity: 1;
 }
 
-.freelance-grid.is-sequence-complete .freelance-card__heading {
+.freelance-grid:not(.has-active-card) .freelance-card__heading {
 	opacity: 0;
+	pointer-events: none;
 	transform: translateY(-0.5rem);
+}
+
+.freelance-grid:not(.has-active-card) .freelance-card::before {
+	opacity: 0;
 }
 
 .freelance-card {
@@ -4310,6 +4316,12 @@ html[data-theme="light"] .coming-soon .hero-orb {
 			opacity 300ms ease,
 			border-color 300ms ease;
 		will-change: flex-basis, max-width;
+	}
+
+	.freelance-grid.is-scroll-sequenced:not(.has-active-card) .freelance-card.is-revealed {
+		flex: 1 1 0;
+		width: auto;
+		max-width: none;
 	}
 
 	.freelance-grid.is-scroll-sequenced .freelance-card__expanded-media {
