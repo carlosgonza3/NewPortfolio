@@ -115,7 +115,7 @@ export function ThemeToggle() {
 	}, []);
 
 	useEffect(() => {
-		const navigation = rootRef.current?.closest(".site-nav");
+		const navigation = rootRef.current?.closest("[data-site-navigation]");
 		navigation?.classList.toggle("has-open-mood", isOpen);
 
 		return () => navigation?.classList.remove("has-open-mood");

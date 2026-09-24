@@ -1,0 +1,119 @@
+@media (max-width: 980px) {
+	.freelance-grid {
+		--freelance-mobile-grid-gap: clamp(0.65rem, 1.8vw, 1rem);
+		--freelance-mobile-sequence-height: clamp(24rem, 60vw, 31rem);
+	}
+
+	.freelance-card,
+	.freelance-grid.has-active-card .freelance-card {
+		height: clamp(24rem, 60vw, 31rem);
+	}
+
+	.freelance-grid.is-scroll-sequenced.is-sequence-complete {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--freelance-mobile-grid-gap);
+	}
+
+	.freelance-grid.is-scroll-sequenced.is-sequence-complete .freelance-card.is-revealed {
+		align-self: stretch;
+		width: 100%;
+		max-width: none;
+		height: calc((var(--freelance-mobile-sequence-height) - var(--freelance-mobile-grid-gap)) / 2);
+		margin: 0;
+		transform: none;
+	}
+
+	.capability-card__select {
+		display: none;
+	}
+
+	.phase-rail {
+		display: none;
+	}
+
+	.phase-edge {
+		top: 0.9rem;
+	}
+
+	.work-intro__counter {
+		display: none;
+	}
+
+	.hero {
+		padding: 9rem var(--gutter) 6rem;
+	}
+
+	.hero-copy {
+		grid-template-columns: repeat(8, minmax(0, 1fr));
+	}
+
+	.hero h1 {
+		font-size: clamp(4rem, 10.5vw, 7.4rem);
+	}
+
+	.hero-meta {
+		grid-column: 1 / 5;
+	}
+
+	.hero-intro,
+	.hero-actions {
+		grid-column: 5 / -1;
+	}
+
+	.thesis,
+	.case-section {
+		grid-template-columns: 1fr;
+	}
+
+	.thesis-copy,
+	.capability-stack {
+		grid-column: 1;
+	}
+
+	.section-heading {
+		grid-template-columns: 1fr;
+	}
+
+	.project-story,
+	.project-story--reverse {
+		grid-template-columns: 1fr;
+		min-height: 100svh;
+	}
+
+	.home-experience.is-continuous-ready .project-story:last-child {
+		padding-bottom: clamp(8rem, 16vw, 11rem);
+	}
+
+	.project-story--reverse .project-story__copy,
+	.project-story--reverse .project-story__media {
+		grid-column: 1;
+		grid-row: auto;
+	}
+
+	.project-number {
+		margin-bottom: 4rem;
+	}
+
+	.project-visual {
+		max-height: 70vh;
+	}
+
+	.knowledge-teaser__content,
+	.knowledge-page__intro {
+		grid-template-columns: 1fr;
+	}
+
+	.knowledge-teaser__statement {
+		padding-top: 0;
+	}
+
+	.freelance-showcase__heading {
+		grid-template-columns: 1fr;
+		gap: 2rem;
+	}
+
+	.graph-layout {
+		grid-template-columns: minmax(0, 1fr) 18rem;
+	}
+}

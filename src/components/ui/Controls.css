@@ -1,0 +1,115 @@
+.button {
+	position: relative;
+	isolation: isolate;
+	display: inline-flex;
+	align-items: center;
+	justify-content: space-between;
+	min-width: fit-content;
+	overflow: hidden;
+	padding: 1rem 1.15rem;
+	border-radius: 999px;
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	box-shadow: 0 0.55rem 1.5rem rgba(0, 0, 0, 0.09);
+	transition:
+		color 300ms ease,
+		transform 440ms cubic-bezier(0.16, 1, 0.3, 1);
+	will-change: transform;
+}
+
+.button::before {
+	position: absolute;
+	z-index: 0;
+	inset: 0;
+	background: linear-gradient(115deg, var(--accent), var(--mood-highlight));
+	content: "";
+	transform: scaleX(0);
+	transform-origin: right center;
+	transition: transform 480ms cubic-bezier(0.16, 1, 0.3, 1);
+	will-change: transform;
+}
+
+.button__label {
+	position: relative;
+	z-index: 1;
+	transition: transform 440ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.button--dark {
+	background: var(--hero-foreground);
+	color: var(--hero-bg);
+}
+
+.button:hover,
+.button:focus-visible {
+	color: white;
+	transform: translate3d(0, -2px, 0);
+}
+
+.button:hover::before,
+.button:focus-visible::before {
+	transform: scaleX(1);
+	transform-origin: left center;
+}
+
+.button:hover .button__label,
+.button:focus-visible .button__label {
+	transform: translate3d(0.12rem, 0, 0);
+}
+
+.text-link {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	padding: 0.6rem 0 0.5rem;
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	transition: color 300ms ease, transform 440ms cubic-bezier(0.16, 1, 0.3, 1);
+	will-change: transform;
+}
+
+.text-link::after {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	height: 1px;
+	background: linear-gradient(90deg, var(--hero-foreground), var(--accent));
+	content: "";
+	opacity: 0;
+	transform: scaleX(0);
+	transform-origin: left center;
+	transition: opacity 180ms ease, transform 440ms cubic-bezier(0.16, 1, 0.3, 1);
+	will-change: opacity, transform;
+}
+
+.text-link span {
+	display: inline-block;
+	margin-left: 0.35rem;
+	transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.text-link:hover,
+.text-link:focus-visible {
+	color: var(--accent);
+	transform: translate3d(0.14rem, 0, 0);
+}
+
+.text-link:hover::after,
+.text-link:focus-visible::after {
+	opacity: 1;
+	transform: scaleX(1);
+}
+
+.text-link:hover span,
+.text-link:focus-visible span {
+	transform: translate(0.28rem, -0.28rem) rotate(6deg);
+}
+
+.button:focus-visible,
+.text-link:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 4px;
+}

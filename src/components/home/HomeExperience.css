@@ -1,0 +1,120 @@
+.home-experience,
+.continuous-flow {
+	position: relative;
+}
+
+.scroll-scene [data-hero-headline],
+.scroll-scene [data-hero-intro],
+.scroll-scene [data-hero-actions],
+.scroll-scene [data-hero-detail],
+.scroll-scene [data-approach-primary],
+.scroll-scene [data-approach-detail],
+.scroll-scene [data-work-intro],
+.scroll-scene [data-project-copy],
+.scroll-scene [data-project-media],
+.scroll-scene [data-knowledge-copy],
+.scroll-scene [data-knowledge-graph],
+.scroll-scene [data-freelance-copy],
+.scroll-scene [data-freelance-card] {
+	transform-origin: 50% 50%;
+	transform-style: preserve-3d;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	html.has-js .hero [data-hero-headline],
+	html.has-js .hero [data-hero-intro],
+	html.has-js .hero [data-hero-actions],
+	html.has-js .hero [data-hero-detail],
+	html.has-js .phase-rail {
+		visibility: hidden;
+		opacity: 0;
+	}
+}
+
+.scroll-scene {
+	position: relative;
+	min-height: 100svh;
+}
+
+.phase-rail {
+	position: fixed;
+	top: 50%;
+	right: 1.2rem;
+	z-index: 45;
+	display: flex;
+	align-items: stretch;
+	gap: 0.85rem;
+	height: 15rem;
+	color: white;
+	mix-blend-mode: difference;
+	pointer-events: none;
+	transform: translateY(-50%);
+}
+
+.phase-rail__track {
+	position: relative;
+	display: block;
+	order: 2;
+	width: 1px;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.2);
+}
+
+.phase-rail__track i {
+	position: absolute;
+	inset: 0;
+	display: block;
+	background: white;
+	transform: scaleY(0);
+	transform-origin: top;
+}
+
+.phase-rail__labels {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	text-align: right;
+}
+
+.phase-rail__labels span {
+	color: rgba(255, 255, 255, 0.38);
+	font-family: monospace;
+	font-size: 0.52rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	transform: translateX(0.35rem);
+}
+
+.phase-rail__labels span.is-active {
+	color: white;
+	transform: translateX(0);
+}
+
+.phase-edge {
+	position: absolute;
+	top: 1.35rem;
+	right: var(--gutter);
+	left: var(--gutter);
+	z-index: 5;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	gap: 1rem;
+	color: var(--muted);
+	font-family: monospace;
+	font-size: 0.52rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	pointer-events: none;
+}
+
+.phase-edge i {
+	display: block;
+	height: 1px;
+	background: currentColor;
+	transform-origin: left;
+}
+
+.knowledge-teaser .phase-edge {
+	color: #676660;
+}

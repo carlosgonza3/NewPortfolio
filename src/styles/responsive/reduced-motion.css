@@ -1,0 +1,58 @@
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+	}
+
+	.scroll-scene {
+		position: relative !important;
+		height: auto !important;
+		min-height: auto !important;
+		transform: none !important;
+	}
+
+	.phase-rail {
+		display: none;
+	}
+
+	.hero.scroll-scene {
+		min-height: 100svh !important;
+	}
+
+	.hero-orb {
+		animation: none;
+		transform: translate3d(-8%, 8%, 0);
+	}
+
+	.hero-grid-depth {
+		transform: none !important;
+	}
+
+	html[data-theme="dark"] .hero-stars span,
+	html[data-theme="dark"] .freelance-stars span {
+		animation: none;
+		opacity: 0.28;
+	}
+
+	.hero h1 .hero-line--light {
+		animation: none;
+		background-position: 50% 50%;
+	}
+
+	.capability-card,
+	.capability-card__body {
+		height: auto !important;
+		opacity: 1 !important;
+		transform: none !important;
+		visibility: visible !important;
+	}
+
+}

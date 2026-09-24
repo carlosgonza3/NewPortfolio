@@ -82,7 +82,7 @@ export function Navigation() {
 	};
 
 	return (
-		<header className={`site-nav${isWordmarkMenuOpen ? " has-open-wordmark" : ""}`} ref={navigationRef}>
+		<header className={`site-nav${isWordmarkMenuOpen ? " has-open-wordmark" : ""}`} data-site-navigation ref={navigationRef}>
 			<div className={`wordmark-menu${isWordmarkMenuOpen ? " is-open" : ""}`} ref={wordmarkMenuRef}>
 				<button
 					aria-controls="wordmark-site-menu"

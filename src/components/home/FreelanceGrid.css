@@ -1,0 +1,525 @@
+.freelance-grid {
+	display: flex;
+	gap: clamp(0.65rem, 1vw, 1rem);
+	width: 100%;
+	margin-inline: auto;
+}
+
+.freelance-grid.is-scroll-sequenced {
+	justify-content: flex-start;
+	flex-direction: row-reverse;
+	gap: 0;
+}
+
+.freelance-grid.is-scroll-sequenced:not(.has-active-card) .freelance-card.is-revealed {
+	flex: 1 1 0;
+	max-width: 100%;
+}
+
+.freelance-grid.is-scroll-sequenced .freelance-card {
+	margin-inline-end: 0;
+	transition:
+		flex-grow 900ms cubic-bezier(0.22, 1, 0.36, 1),
+		max-width 900ms cubic-bezier(0.22, 1, 0.36, 1),
+		margin-inline-end 900ms cubic-bezier(0.22, 1, 0.36, 1),
+		transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 600ms ease,
+		border-color 400ms ease;
+}
+
+.freelance-grid.is-scroll-sequenced .freelance-card.is-revealed {
+	margin-inline-end: clamp(0.65rem, 1vw, 1rem);
+}
+
+.freelance-grid.is-scroll-sequenced .freelance-card.is-revealed:first-child {
+	margin-inline-end: 0;
+}
+
+.freelance-grid.is-scroll-sequenced.is-sequence-complete .freelance-card.is-revealed {
+	flex: 1 1 0;
+	max-width: 100%;
+	opacity: 1;
+}
+
+.freelance-grid:not(.has-active-card) .freelance-card__heading {
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(-0.5rem);
+}
+
+.freelance-grid:not(.has-active-card) .freelance-card::before {
+	opacity: 0;
+}
+
+.freelance-card {
+	position: relative;
+	flex: 1 1 0;
+	min-width: 0;
+	height: clamp(25rem, 41vw, 35rem);
+	overflow: hidden;
+	border: 1px solid color-mix(in srgb, var(--hero-foreground) 12%, transparent);
+	border-radius: clamp(1rem, 1.5vw, 1.5rem);
+	background: #080b10;
+	box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.12);
+	transition:
+		flex-grow 720ms cubic-bezier(0.16, 1, 0.3, 1),
+		max-width 720ms cubic-bezier(0.16, 1, 0.3, 1),
+		transform 720ms cubic-bezier(0.16, 1, 0.3, 1),
+		border-color 320ms ease,
+		box-shadow 420ms ease,
+	opacity 320ms ease;
+}
+
+html[data-theme="light"] .freelance-card {
+	border: 0;
+}
+
+.freelance-grid.is-scroll-sequenced .freelance-card:not(.is-revealed) {
+	flex-grow: 0;
+	max-width: 0;
+	border-width: 0;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateX(-2.5rem) scale(0.98);
+}
+
+.freelance-grid.is-scroll-sequenced .freelance-card.is-revealed {
+	max-width: 100%;
+	transform: translateX(0) scale(1);
+}
+
+.freelance-grid.has-active-card .freelance-card {
+	flex-grow: 0.58;
+	opacity: 0.72;
+}
+
+.freelance-grid.has-active-card .freelance-card.is-active {
+	flex-grow: 2.8;
+	opacity: 1;
+}
+
+.freelance-grid.is-scroll-sequenced.has-active-card .freelance-card.is-active {
+	max-width: 60%;
+}
+
+.freelance-grid.is-scroll-sequenced.has-active-card[data-revealed-count="1"] .freelance-card.is-active {
+	transform: translateX(-33.333%);
+}
+
+.freelance-grid.is-scroll-sequenced.has-active-card .freelance-card:not(.is-revealed) {
+	flex-grow: 0;
+	opacity: 0;
+}
+
+.freelance-card::before {
+	position: absolute;
+	inset: auto 0 0;
+	height: 3px;
+	background: var(--freelance-accent);
+	content: "";
+	opacity: 0.38;
+	transform: scaleX(0.25);
+	transform-origin: left;
+	transition: opacity 320ms ease, transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.freelance-card:focus-within,
+.freelance-card.is-active {
+	box-shadow: 0 1.8rem 5rem rgba(0, 0, 0, 0.2);
+}
+
+.freelance-card:hover {
+	box-shadow: 0 1.8rem 5rem rgba(0, 0, 0, 0.2);
+}
+
+.freelance-card.is-active::before {
+	opacity: 0.9;
+	transform: scaleX(1);
+}
+
+.freelance-card__toggle {
+	position: absolute;
+	inset: 0;
+	z-index: 4;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	text-align: left;
+}
+
+.freelance-card__heading {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 4;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	width: 100%;
+	padding: 1.1rem 1.15rem 3.5rem;
+	background: linear-gradient(to bottom, rgba(5, 7, 11, 0.82), rgba(5, 7, 11, 0.32) 58%, transparent);
+	color: #fff;
+	opacity: 0.88;
+	transition: opacity 260ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.freelance-card.is-active .freelance-card__heading {
+	background: radial-gradient(ellipse clamp(18rem, 42vw, 32rem) 6.5rem at top left, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.36) 48%, transparent 100%);
+	opacity: 1;
+}
+
+.freelance-card__media {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	border-radius: inherit;
+	background: var(--freelance-card-color);
+	transition: opacity 360ms ease;
+}
+
+.freelance-card.is-active .freelance-card__media {
+	opacity: 0;
+}
+
+.freelance-card__media::before {
+	display: none;
+}
+
+.freelance-card__logo-image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.freelance-card__logo-image {
+	padding: clamp(2rem, 4vw, 3.75rem);
+	object-fit: contain;
+}
+
+.freelance-card__media-placeholder {
+	transition: opacity 480ms ease, transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.freelance-card.is-active .freelance-card__media-placeholder,
+.freelance-card.is-active .freelance-card__logo-image {
+	opacity: 0.1;
+	transform: scale(0.92);
+}
+
+.freelance-card__expanded-media {
+	--freelance-video-details-space: 10.5rem;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 3;
+	display: grid;
+	place-items: center;
+	overflow: hidden;
+	border: 0;
+	border-radius: clamp(1rem, 1.5vw, 1.5rem) clamp(1rem, 1.5vw, 1.5rem) 0 0;
+	background: #05070b;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(0.8rem);
+	transition: opacity 360ms ease 100ms, transform 600ms cubic-bezier(0.22, 1, 0.36, 1) 100ms;
+}
+
+.freelance-card.is-active .freelance-card__expanded-media {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.freelance-card__expanded-media video {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	width: 100%;
+	height: calc(100% - var(--freelance-video-details-space));
+	object-fit: cover;
+	-webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 5rem), transparent 100%);
+	mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 5rem), transparent 100%);
+}
+
+.freelance-card__video-placeholder {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.6rem;
+	color: rgba(255, 255, 255, 0.56);
+	font-family: monospace;
+	font-size: 0.58rem;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.freelance-card:not(.is-active):hover .freelance-card__logo-image,
+.freelance-card:not(.is-active):focus-within .freelance-card__logo-image {
+	transform: scale(1.025);
+}
+
+.freelance-card__media-placeholder {
+	position: relative;
+	z-index: 1;
+	display: grid;
+	place-items: center;
+	gap: 0.6rem;
+	color: var(--freelance-accent);
+	font-family: monospace;
+	font-size: clamp(1.8rem, 3.5vw, 3rem);
+	font-weight: 800;
+	letter-spacing: 0.03em;
+}
+
+.freelance-card__toggle:focus-visible {
+	outline: 2px solid var(--freelance-accent);
+	outline-offset: -0.25rem;
+}
+
+.freelance-card__name {
+	min-width: 0;
+	font-size: clamp(0.86rem, 1.1vw, 1.08rem);
+	font-weight: 700;
+	letter-spacing: -0.015em;
+	line-height: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	transition: opacity 300ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+	white-space: nowrap;
+}
+
+.freelance-card:not(.is-active) .freelance-card__name {
+	opacity: 0;
+	transform: translateY(-0.35rem);
+}
+
+.freelance-card__icon {
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	border: 1px solid color-mix(in srgb, var(--hero-foreground) 18%, transparent);
+	border-radius: 50%;
+	background: rgba(5, 7, 11, 0.3);
+	flex: 0 0 auto;
+}
+
+.freelance-card__details,
+.freelance-card.is-active .freelance-card__details {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 5;
+	min-width: 0;
+	background: linear-gradient(
+		to bottom,
+		transparent 0%,
+		rgba(5, 7, 11, 0.18) 12%,
+		rgba(5, 7, 11, 0.72) 34%,
+		rgba(5, 7, 11, 0.94) 58%,
+		#05070b 100%
+	);
+	color: #fff;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(1.5rem);
+	transition: opacity 340ms ease 80ms, transform 560ms cubic-bezier(0.16, 1, 0.3, 1) 80ms;
+}
+
+.freelance-card.is-active .freelance-card__details {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
+}
+
+.freelance-card__details-inner {
+	display: flex;
+	flex-direction: column;
+	width: min(100%, 42rem);
+	padding: 5rem clamp(1.15rem, 2vw, 2rem) clamp(1.2rem, 2vw, 1.8rem);
+}
+
+.freelance-card__details p {
+	display: -webkit-box;
+	max-width: 34rem;
+	margin: 0;
+	overflow: hidden;
+	color: rgba(255, 255, 255, 0.74);
+	font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+	line-height: 1.55;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.freelance-card__details p.is-expanded {
+	display: block;
+	overflow: visible;
+	-webkit-line-clamp: unset;
+}
+
+.freelance-card__description {
+	display: grid;
+	justify-items: start;
+	gap: 0.55rem;
+	margin-bottom: 1.25rem;
+}
+
+.freelance-card__description button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.62);
+	cursor: pointer;
+	font: inherit;
+	font-size: 0.72rem;
+	font-weight: 560;
+	letter-spacing: -0.01em;
+}
+
+.freelance-card__description button:hover,
+.freelance-card__description button:focus-visible {
+	color: #fff;
+}
+
+.freelance-card__description button svg {
+	transition: transform 240ms ease;
+}
+
+.freelance-card__description button[aria-expanded="true"] svg {
+	transform: rotate(180deg);
+}
+
+.freelance-card__details dl {
+	display: grid;
+	grid-template-columns: minmax(7rem, 0.45fr) minmax(0, 1.55fr);
+	gap: clamp(1.25rem, 3vw, 2.5rem);
+	margin: 0 0 1.1rem;
+	padding-top: 1rem;
+}
+
+.freelance-card__details dl div {
+	display: grid;
+	gap: 0.35rem;
+}
+
+.freelance-card__details dt {
+	color: rgba(255, 255, 255, 0.46);
+	font-family: inherit;
+	font-size: 0.61rem;
+	font-weight: 620;
+	letter-spacing: 0.075em;
+	text-transform: uppercase;
+}
+
+.freelance-card__details dd {
+	margin: 0;
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+.freelance-card__status dd {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+}
+
+.freelance-card__status dd::before {
+	width: 0.42rem;
+	height: 0.42rem;
+	border-radius: 50%;
+	background: var(--freelance-accent);
+	box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--freelance-accent) 15%, transparent);
+	content: "";
+	flex: 0 0 auto;
+}
+
+.freelance-card__technologies {
+	min-width: 0;
+}
+
+.freelance-card__technologies ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.freelance-card__technologies li {
+	padding: 0.28rem 0.55rem;
+	border: 0;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.09);
+	color: rgba(255, 255, 255, 0.8);
+	font-family: inherit;
+	font-size: 0.64rem;
+	font-weight: 560;
+	letter-spacing: -0.005em;
+}
+
+.freelance-card__details a {
+	display: inline-flex;
+	align-items: center;
+	align-self: flex-start;
+	gap: 0.45rem;
+	padding-bottom: 0.25rem;
+	border-bottom: 1px solid currentColor;
+	font-size: 0.72rem;
+	font-weight: 700;
+}
+
+.freelance-card__details a:hover svg,
+.freelance-card__details a:focus-visible svg {
+	transform: translate(0.18rem, -0.18rem);
+}
+
+.freelance-card__details a svg {
+	transition: transform 220ms ease;
+}
+
+.freelance-grid.has-active-card .freelance-card:not(.is-active) .freelance-card__heading {
+	padding-inline: 0.8rem;
+}
+
+.freelance-showcase__content {
+	padding-top: clamp(5.5rem, 8vw, 7.5rem);
+	padding-bottom: clamp(3rem, 5vw, 5rem);
+}
+
+.freelance-showcase__heading {
+	display: block;
+	width: min(100%, 62rem);
+	margin: 0 0 clamp(1.5rem, 3vw, 2.75rem);
+}
+
+.freelance-showcase__heading h2 {
+	font-size: clamp(2rem, 3.5vw, 4.25rem);
+	font-weight: 560;
+	letter-spacing: -0.055em;
+	line-height: 0.95;
+}
+
+@media (hover: none) {
+	.freelance-card__heading {
+		opacity: 0.76;
+		transform: none;
+	}
+}

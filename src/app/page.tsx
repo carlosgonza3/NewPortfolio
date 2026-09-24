@@ -68,8 +68,8 @@ export default function Home() {
 		<HomeExperience>
 
 			{/*Page Progress*/}
-			<div className="phase-rail" aria-hidden="true">
-				<span className="phase-rail__track"><i /></span>
+			<div className="phase-rail" data-phase-rail aria-hidden="true">
+				<span className="phase-rail__track"><i data-phase-progress /></span>
 				<div className="phase-rail__labels">
 					<span data-phase-dot="hero">Origin</span>
 					<span data-phase-dot="approach">Approach</span>
@@ -94,7 +94,7 @@ export default function Home() {
 						<i className="hero-daylight__accent hero-daylight__accent--two" />
 						<i className="hero-daylight__accent hero-daylight__accent--three" />
 					</div>
-					<div className="hero-stars" aria-hidden="true">
+					<div className="hero-stars" data-hero-stars aria-hidden="true">
 						{heroStars.map((star, index) => (
 							<span
 								data-star-x={star.x / 100}
@@ -164,8 +164,8 @@ export default function Home() {
 					</div>
 
 					{/* Hero Section */}
-					<div className="hero-grid-depth" aria-hidden="true">
-						<canvas className="hero-grid-canvas" />
+					<div className="hero-grid-depth" data-hero-grid aria-hidden="true">
+						<canvas className="hero-grid-canvas" data-hero-grid-canvas />
 					</div>
 					<div className="hero-copy">
 						<h1>

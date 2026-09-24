@@ -1,0 +1,315 @@
+.graph-app {
+	max-width: var(--max-width);
+	margin-inline: auto;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 1.4rem;
+	overflow: hidden;
+	background: #131314;
+}
+
+.graph-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 2rem;
+	padding: 1rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.graph-filters {
+	display: flex;
+	gap: 0.35rem;
+}
+
+.graph-filters button {
+	padding: 0.6rem 0.9rem;
+	border: 1px solid transparent;
+	border-radius: 999px;
+	background: transparent;
+	color: #8c8b86;
+	cursor: pointer;
+	font-size: 0.67rem;
+	font-weight: 700;
+}
+
+.graph-filters button:hover,
+.graph-filters button:focus-visible,
+.graph-filters button.is-active {
+	border-color: rgba(255, 255, 255, 0.18);
+	background: #222224;
+	color: white;
+}
+
+.graph-search {
+	display: flex;
+	align-items: center;
+	gap: 0.7rem;
+	width: min(19rem, 100%);
+	padding: 0.7rem 0.9rem;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 999px;
+}
+
+.graph-search svg {
+	width: 1rem;
+	fill: none;
+	stroke: #74736e;
+	stroke-width: 1.5;
+}
+
+.graph-search input {
+	width: 100%;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	color: white;
+	font-size: 0.72rem;
+}
+
+.graph-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 22rem;
+	min-height: 45rem;
+}
+
+.graph-canvas {
+	position: relative;
+	min-width: 0;
+	overflow: hidden;
+}
+
+.graph-grid {
+	position: absolute;
+	inset: 0;
+	background-image: radial-gradient(rgba(255, 255, 255, 0.16) 0.7px, transparent 0.7px);
+	background-size: 20px 20px;
+	mask-image: radial-gradient(circle at center, black, transparent 88%);
+}
+
+.graph-edges {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.graph-edges line {
+	vector-effect: non-scaling-stroke;
+	stroke: rgba(255, 255, 255, 0.16);
+	stroke-width: 1;
+	transition: opacity 180ms ease, stroke 180ms ease;
+}
+
+.graph-edges line.is-related {
+	stroke: rgba(255, 90, 31, 0.72);
+}
+
+.graph-edges line.is-hidden {
+	opacity: 0.035;
+}
+
+.graph-node {
+	position: absolute;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	gap: 0.45rem;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: white;
+	cursor: pointer;
+	transform: translate(-50%, -50%);
+	transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.graph-node:hover,
+.graph-node:focus-visible,
+.graph-node.is-selected {
+	z-index: 4;
+	transform: translate(-50%, -50%) scale(1.08);
+}
+
+.graph-node:focus-visible {
+	outline: 1px solid white;
+	outline-offset: 0.55rem;
+}
+
+.graph-node.is-hidden {
+	opacity: 0.08;
+	pointer-events: none;
+}
+
+.graph-node__dot {
+	display: block;
+	width: 0.75rem;
+	height: 0.75rem;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+	background: #131314;
+	box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.04);
+}
+
+.graph-node.is-selected .graph-node__dot {
+	box-shadow: 0 0 0 0.4rem rgba(255, 90, 31, 0.15), 0 0 1.4rem currentColor;
+}
+
+.graph-node__label {
+	max-width: 8rem;
+	font-size: 0.58rem;
+	font-weight: 700;
+	line-height: 1.2;
+	text-align: left;
+}
+
+.graph-node--course { color: #54a8ff; }
+.graph-node--concept { color: #f5df69; }
+.graph-node--project { color: #ff7141; }
+.graph-node--technology { color: #8c73ff; }
+.graph-node--skill { color: #53d49a; }
+
+.graph-key {
+	position: absolute;
+	bottom: 1.3rem;
+	left: 1.3rem;
+	display: flex;
+	gap: 1rem;
+	color: #797873;
+	font-size: 0.55rem;
+}
+
+.graph-key span {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.graph-key i {
+	width: 0.35rem;
+	height: 0.35rem;
+	border-radius: 50%;
+}
+
+.graph-key .course { background: #54a8ff; }
+.graph-key .concept { background: #f5df69; }
+.graph-key .project { background: #ff7141; }
+.graph-key .technology { background: #8c73ff; }
+
+.node-panel {
+	padding: 1.4rem;
+	border-left: 1px solid rgba(255, 255, 255, 0.11);
+	background: #171718;
+}
+
+.node-panel__top {
+	display: flex;
+	justify-content: space-between;
+	color: #6f6e69;
+	font-family: monospace;
+	font-size: 0.55rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.node-panel__glyph {
+	position: relative;
+	width: 5.5rem;
+	height: 5.5rem;
+	margin: 4rem 0 2.5rem;
+	border: 1px solid currentColor;
+	border-radius: 50%;
+	color: #ff7141;
+}
+
+.node-panel__glyph span {
+	position: absolute;
+	width: 0.55rem;
+	height: 0.55rem;
+	border-radius: 50%;
+	background: currentColor;
+}
+
+.node-panel__glyph span:nth-child(1) { top: 12%; left: 18%; }
+.node-panel__glyph span:nth-child(2) { top: 42%; right: 8%; }
+.node-panel__glyph span:nth-child(3) { bottom: 8%; left: 37%; }
+.node-panel__glyph::before,
+.node-panel__glyph::after {
+	position: absolute;
+	width: 3.7rem;
+	height: 1px;
+	background: currentColor;
+	content: "";
+	transform-origin: left;
+}
+
+.node-panel__glyph::before { top: 26%; left: 22%; transform: rotate(17deg); }
+.node-panel__glyph::after { top: 48%; left: 62%; transform: rotate(113deg); }
+.node-panel__glyph--course { color: #54a8ff; }
+.node-panel__glyph--concept { color: #f5df69; }
+.node-panel__glyph--technology { color: #8c73ff; }
+.node-panel__glyph--skill { color: #53d49a; }
+
+.node-panel h2 {
+	margin: 0 0 1rem;
+	font-size: 2.5rem;
+	font-weight: 500;
+	letter-spacing: -0.06em;
+	line-height: 0.95;
+}
+
+.node-panel > p {
+	margin: 0;
+	color: #96958f;
+	font-size: 0.8rem;
+	line-height: 1.6;
+}
+
+.node-panel__relations {
+	margin-top: 3rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.node-panel__relations > p {
+	display: flex;
+	justify-content: space-between;
+	margin: 0;
+	padding: 1rem 0;
+	color: #71706b;
+	font-size: 0.6rem;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.node-panel__relations button {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	width: 100%;
+	padding: 0.8rem 0;
+	border: 0;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+	background: transparent;
+	color: white;
+	cursor: pointer;
+	text-align: left;
+}
+
+.node-panel__relations button span {
+	grid-column: 1 / -1;
+	color: #66655f;
+	font-size: 0.52rem;
+	text-transform: uppercase;
+}
+
+.node-panel__relations button strong {
+	font-size: 0.7rem;
+}
+
+.node-panel__relations button i {
+	font-style: normal;
+	transition: transform 180ms ease;
+}
+
+.node-panel__relations button:hover i,
+.node-panel__relations button:focus-visible i {
+	transform: translate(0.2rem, -0.2rem);
+}

@@ -1,5 +1,3 @@
-import freelanceProjectData from "./freelance-projects.json";
-
 export type FreelanceProject = {
 	id: string;
 	name: string;
@@ -15,9 +13,61 @@ export type FreelanceProject = {
 	videoPath: string;
 };
 
-type FreelanceProjectFile = {
-	assetGuide: Record<string, string>;
-	projects: FreelanceProject[];
-};
-
-export const freelanceProjects = (freelanceProjectData as FreelanceProjectFile).projects;
+export const freelanceProjects: FreelanceProject[] = [
+			{
+				"id": "onix",
+				"name": "ONIX - Bedding & Co.",
+				"description": "A website designed to showcase premium sleep products through immersive visuals, interactive mattress layer animations, multilingual support, and a modern experience.",
+				"status": "Delivered",
+				"technologies": ["React", "React Router", "Vite", "Tailwind CSS", "shadcn/ui", "JavaScript", "JSX", "CSS Animations", "Netlify", "Github"],
+				"visitHref": "https://onixbeddingandco.com/",
+				"cardColor": "#808080",
+				"accent": "#000000",
+				"logoPath": "/brands/onix/logo.png",
+				"logoAlt": "ONIX logo",
+				"logoFallback": "Video showcasing webpage",
+				"videoPath": "/media/onix.webm"
+			},
+			{
+				"id": "re-wellness",
+				"name": "RE Wellness & Recovery",
+				"description": "A small wellness-focused landing page designed to present the brand and its services through a clean, calming, and user-friendly experience.",
+				"status": "Delivered",
+				"technologies": ["React", "JavaScript", "HTML", "CSS", "GitHub", "Netlify"],
+				"visitHref": "https://rewellness.co/",
+				"cardColor": "#FFFFFF",
+				"accent": "#000000",
+				"logoPath": "/brands/re-wellness/logo-2.png",
+				"logoAlt": "Company B logo",
+				"logoFallback": "Video showcasing webpage",
+				"videoPath": "/media/re-wellness.webm"
+			},
+			{
+				"id": "sns",
+				"name": "SNS",
+				"description": "A responsive finance website featuring scroll-triggered content reveals, interactive carousels, and dynamic layouts. Animated gradients and glowing orbs create a modern, atmospheric visual identity.",
+				"status": "In development",
+				"technologies": ["React", "TypeScript", "Vite", "React Router", "GSAP", "ScrollTrigger", "Sass/SCSS", "CSS Modules"],
+				"visitHref": "",
+				"cardColor": "linear-gradient(124.66deg, #FDFDFB 27.65%, rgba(221, 173, 213, 0.9) 61.37%, rgba(200, 162, 195, 0.9) 69.68%, rgba(255, 196, 159, 0.9) 95.43%)",
+				"accent": "#000000",
+				"logoPath": "/brands/sns/logo.png",
+				"logoAlt": "Company C logo",
+				"logoFallback": "Video showcasing webpage",
+				"videoPath": "/media/sns.webm"
+			},
+			{
+				"id": "public-outdoors",
+				"name": "PUBLIC",
+				"description": "An immersive, scroll-driven website for Public Outdoors, built with React, TypeScript, Vite, and GSAP. ScrollTrigger animations, pinned scenes, expressive typography, horizontal storytelling, and fluid transitions transform the company’s portfolio into a cinematic experience—optimized for every device.",
+				"status": "In development",
+				"technologies": [],
+				"visitHref": "",
+				"cardColor": "#F7F5EF",
+				"accent": "#000000",
+				"logoPath": "/brands/public/download.svg",
+				"logoAlt": "Company D logo",
+				"logoFallback": "Video showcasing webpage",
+				"videoPath": "/media/public.webm"
+			}
+]

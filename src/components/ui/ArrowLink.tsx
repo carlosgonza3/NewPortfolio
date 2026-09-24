@@ -1,4 +1,5 @@
 import Link from "next/link";
+import styles from "./ArrowLink.module.css";
 
 interface ArrowLinkProps {
 	href: string;
@@ -8,9 +9,9 @@ interface ArrowLinkProps {
 
 export function ArrowLink({ href, children, inverse = false }: ArrowLinkProps) {
 	return (
-		<Link className={`arrow-link${inverse ? " arrow-link--inverse" : ""}`} href={href}>
+		<Link className={`${styles.link}${inverse ? ` ${styles.inverse}` : ""}`} href={href}>
 			<span>{children}</span>
-			<span className="arrow-link__icon" aria-hidden="true">↗</span>
+			<span className={styles.icon} aria-hidden="true">↗</span>
 		</Link>
 	);
 }

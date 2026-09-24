@@ -1,0 +1,23 @@
+.link {
+	display: inline-flex;
+	align-items: center;
+	gap: 1.25rem;
+	padding-bottom: 0.45rem;
+	border-bottom: 1px solid currentColor;
+	font-size: 0.74rem;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+}
+
+.icon {
+	transition: transform 180ms ease;
+}
+
+.link:hover .icon,
+.link:focus-visible .icon {
+	transform: translate(0.25rem, -0.25rem);
+}
+
+.inverse {
+	color: inherit;
+}

@@ -107,7 +107,7 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 			const media = gsap.matchMedia();
 			const cardPointerCleanups: Array<() => void> = [];
 			const heroSurface = root.querySelector<HTMLElement>("[data-scroll-scene='hero']");
-			const stars = Array.from(root.querySelectorAll<HTMLElement>(".hero-stars span")).map((element) => ({
+			const stars = Array.from(root.querySelectorAll<HTMLElement>("[data-hero-stars] span")).map((element) => ({
 				depth: Number(element.dataset.starDepth ?? 1),
 				element,
 				peak: Number(element.dataset.starPeak ?? 0.4),
@@ -120,8 +120,8 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 					: Math.floor(Math.random() * 2147483646) + 1;
 			}
 			const heroSpacePhases = createHeroSpacePhases(spaceSeed.current, stars.map(({ depth }) => depth));
-			const heroGrid = root.querySelector<HTMLElement>(".hero-grid-depth");
-			const heroGridCanvas = heroGrid?.querySelector<HTMLCanvasElement>(".hero-grid-canvas") ?? null;
+			const heroGrid = root.querySelector<HTMLElement>("[data-hero-grid]");
+			const heroGridCanvas = heroGrid?.querySelector<HTMLCanvasElement>("[data-hero-grid-canvas]") ?? null;
 			const starElements = stars.map(({ element }) => element);
 			const meshPhaseVars = (phase: HeroSpacePhase) => ({
 				"--mesh-phase-bg-x": `${phase.mesh.backgroundX}px`,
@@ -430,7 +430,7 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 			) => {
 				const copy = gsap.utils.toArray<HTMLElement>(freelance.querySelectorAll("[data-freelance-copy] > *"));
 				const grid = freelance.querySelector<HTMLElement>("[data-freelance-grid]");
-				const edge = freelance.querySelector<HTMLElement>(".phase-edge i");
+				const edge = freelance.querySelector<HTMLElement>("[data-phase-edge]");
 				let previousSequenceKey = "";
 
 				if (!grid) return () => undefined;
@@ -512,8 +512,8 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				root.classList.add("is-continuous-ready");
 				activatePhase(root, "hero");
 
-				const rail = root.querySelector<HTMLElement>(".phase-rail");
-				const railProgress = root.querySelector<HTMLElement>(".phase-rail__track i");
+				const rail = root.querySelector<HTMLElement>("[data-phase-rail]");
+				const railProgress = root.querySelector<HTMLElement>("[data-phase-progress]");
 
 				if (rail) gsap.set(rail, { autoAlpha: 0, x: 14 });
 				if (railProgress) {
@@ -579,12 +579,12 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				const approach = root.querySelector<HTMLElement>("[data-scroll-scene='approach']");
 				if (approach) {
 					const primary = gsap.utils.toArray<HTMLElement>(approach.querySelectorAll("[data-approach-primary]"));
-					const supportingCopy = gsap.utils.toArray<HTMLElement>(approach.querySelectorAll(".thesis-copy [data-approach-detail]"));
+					const supportingCopy = gsap.utils.toArray<HTMLElement>(approach.querySelectorAll("[data-approach-detail]"));
 					const cards = gsap.utils.toArray<HTMLElement>(approach.querySelectorAll("[data-approach-card]"));
 					const cardSelectors = cards.map((card) => card.querySelector<HTMLButtonElement>("[data-approach-card-select]"));
 					const cardSurfaces = cards.map((card) => card.querySelector<HTMLElement>("[data-approach-card-surface]"));
 					const cardBodies = cards.map((card) => card.querySelector<HTMLElement>("[data-approach-card-body]"));
-					const cardMarks = cards.map((card) => card.querySelector<HTMLElement>(".capability-card__mark i:last-child"));
+					const cardMarks = cards.map((card) => card.querySelector<HTMLElement>("[data-approach-card-mark]"));
 					const availableCardBodies = cardBodies.filter((body): body is HTMLElement => body !== null);
 					const availableCardMarks = cardMarks.filter((mark): mark is HTMLElement => mark !== null);
 					const rangeProgress = approach.querySelector<HTMLElement>("[data-approach-progress]");
@@ -863,7 +863,7 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				const workIntro = root.querySelector<HTMLElement>("[data-scroll-scene='work-intro']");
 				if (workIntro) {
 					const items = gsap.utils.toArray<HTMLElement>(workIntro.querySelectorAll("[data-work-intro]"));
-					const edge = workIntro.querySelector<HTMLElement>(".phase-edge i");
+					const edge = workIntro.querySelector<HTMLElement>("[data-phase-edge]");
 					gsap.set(items, { autoAlpha: 0, rotateX: 8, y: 82 });
 					if (edge) gsap.set(edge, { scaleX: 0 });
 
@@ -889,8 +889,8 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 				projects.forEach((project, index) => {
 					const copy = gsap.utils.toArray<HTMLElement>(project.querySelectorAll("[data-project-copy]"));
 					const mediaElement = project.querySelector<HTMLElement>("[data-project-media]");
-					const visual = project.querySelector<HTMLElement>(".project-visual");
-					const edge = project.querySelector<HTMLElement>(".phase-edge i");
+					const visual = project.querySelector<HTMLElement>("[data-project-visual]");
+					const edge = project.querySelector<HTMLElement>("[data-phase-edge]");
 					const direction = index % 2 === 0 ? 1 : -1;
 
 					gsap.set(copy, { autoAlpha: 0, rotateX: 7, x: -36 * direction, y: 42 });
@@ -926,7 +926,7 @@ export function HomeExperience({ children }: { children: ReactNode }) {
 					const path = graph?.querySelector<SVGPathElement>("path");
 					const circles = gsap.utils.toArray<SVGCircleElement>(graph?.querySelectorAll("circle") ?? []);
 					const labels = gsap.utils.toArray<HTMLElement>(graph?.querySelectorAll(".mini-label") ?? []);
-					const edge = knowledge.querySelector<HTMLElement>(".phase-edge i");
+					const edge = knowledge.querySelector<HTMLElement>("[data-phase-edge]");
 
 					gsap.set(copy, { autoAlpha: 0, rotateX: 7, y: 58 });
 					if (graph) gsap.set(graph, { autoAlpha: 0, scale: 0.94, y: 56 });

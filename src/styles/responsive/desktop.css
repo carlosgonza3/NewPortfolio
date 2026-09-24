@@ -1,0 +1,140 @@
+@media (min-width: 981px) {
+	.freelance-grid .freelance-card__media {
+		filter: brightness(0.9) saturate(0.96);
+	}
+
+	.freelance-grid .freelance-card__logo-image {
+		transition:
+			opacity 340ms ease,
+			transform 580ms cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.freelance-grid.is-scroll-sequenced {
+		gap: clamp(0.65rem, 1vw, 1rem);
+	}
+
+	.freelance-grid.is-scroll-sequenced .freelance-card {
+		flex: 0 0 clamp(2.5rem, 3.4vw, 3.75rem);
+		width: clamp(2.5rem, 3.4vw, 3.75rem);
+		max-width: clamp(2.5rem, 3.4vw, 3.75rem);
+		margin: 0;
+		contain: paint;
+		opacity: 1;
+		transform: none;
+		transition:
+			flex-grow 680ms cubic-bezier(0.2, 0.78, 0.24, 1),
+			flex-basis 680ms cubic-bezier(0.2, 0.78, 0.24, 1),
+			max-width 680ms cubic-bezier(0.2, 0.78, 0.24, 1),
+			opacity 300ms ease,
+			border-color 300ms ease;
+		will-change: flex-basis, max-width;
+	}
+
+	.freelance-grid.is-scroll-sequenced:not(.has-active-card) .freelance-card.is-revealed {
+		flex: 1 1 0;
+		width: auto;
+		max-width: none;
+	}
+
+	.freelance-grid.is-scroll-sequenced .freelance-card__expanded-media {
+		transition:
+			opacity 260ms ease 40ms,
+			transform 440ms cubic-bezier(0.2, 0.78, 0.24, 1) 40ms;
+	}
+
+	.freelance-grid.is-scroll-sequenced .freelance-card__details,
+	.freelance-grid.is-scroll-sequenced .freelance-card.is-active .freelance-card__details {
+		transition:
+			opacity 260ms ease 40ms,
+			transform 440ms cubic-bezier(0.2, 0.78, 0.24, 1) 40ms;
+	}
+
+	.freelance-grid.is-scroll-sequenced .freelance-card.is-active {
+		flex: 5 1 0;
+		width: auto;
+		max-width: min(60%, 52rem);
+	}
+
+	.freelance-grid.is-scroll-sequenced .freelance-card.is-adjacent {
+		flex: 2 1 0;
+		width: auto;
+		max-width: clamp(10rem, 22vw, 20rem);
+	}
+
+	.freelance-grid.is-scroll-sequenced .freelance-card.is-adjacent .freelance-card__heading,
+	.freelance-grid.is-scroll-sequenced .freelance-card.is-collapsed .freelance-card__heading {
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.freelance-grid.is-scroll-sequenced .freelance-card.is-collapsed .freelance-card__logo-image,
+	.freelance-grid.is-scroll-sequenced .freelance-card.is-collapsed .freelance-card__media-placeholder {
+		opacity: 0;
+		transform: scale(0.88);
+	}
+
+	.home-experience.is-continuous-ready .scroll-scene {
+		height: 100svh;
+		min-height: 100svh;
+		overflow: hidden;
+		perspective: 1200px;
+	}
+
+	.home-experience.is-continuous-ready .work-intro {
+		display: grid;
+		align-items: center;
+		background: var(--paper-bright);
+	}
+
+	.home-experience.is-continuous-ready .work-intro .section-heading {
+		width: 100%;
+		padding-top: 7rem;
+		padding-bottom: 7rem;
+	}
+
+	.home-experience.is-continuous-ready .thesis {
+		align-content: center;
+		padding-top: 5rem;
+		padding-bottom: 3rem;
+	}
+
+	.home-experience.is-continuous-ready .thesis-copy > p:not(.eyebrow) {
+		margin-top: 2rem;
+	}
+
+	.home-experience.is-continuous-ready .capability-stack {
+		align-self: center;
+	}
+
+	.home-experience.is-continuous-ready .project-story {
+		background: var(--paper-bright);
+		padding-top: 4.5rem;
+		padding-bottom: 3rem;
+	}
+
+	.home-experience.is-continuous-ready .project-story .project-visual {
+		height: min(68vh, 44rem);
+		aspect-ratio: auto;
+	}
+
+	.home-experience.is-continuous-ready .knowledge-teaser__content {
+		height: 100%;
+		min-height: 0;
+		padding-top: 6rem;
+		padding-bottom: 2.5rem;
+	}
+
+	.home-experience.is-continuous-ready .knowledge-teaser__statement {
+		padding-top: 2rem;
+	}
+
+	.home-experience.is-continuous-ready .knowledge-teaser .section-index {
+		margin-bottom: 2rem;
+	}
+
+	.home-experience.is-continuous-ready .knowledge-teaser .mini-graph {
+		height: min(32vh, 21rem);
+		margin-top: 0.75rem;
+	}
+
+}

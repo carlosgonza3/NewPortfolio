@@ -1,0 +1,38 @@
+@media (min-width: 981px) and (max-height: 760px) {
+	.home-experience.is-continuous-ready .thesis {
+		gap: 2rem;
+		padding-top: 4.5rem;
+		padding-bottom: 2rem;
+	}
+
+	.home-experience.is-continuous-ready .thesis-copy > p:not(.eyebrow) {
+		margin-top: 1.5rem;
+		font-size: 1rem;
+	}
+
+	.home-experience.is-continuous-ready .thesis h2 {
+		font-size: clamp(2.8rem, 4.7vw, 4.8rem);
+	}
+
+	.home-experience.is-continuous-ready .capability-stack {
+		gap: 0.45rem;
+	}
+
+	.home-experience.is-continuous-ready .capability-card__heading {
+		min-height: 3.9rem;
+	}
+
+	.home-experience.is-continuous-ready .capability-card__body-inner {
+		padding-bottom: 0.9rem;
+	}
+
+	.home-experience.is-continuous-ready .project-story {
+		padding-top: 4.25rem;
+		padding-bottom: 2rem;
+	}
+
+	.home-experience.is-continuous-ready .project-number {
+		margin-bottom: 2rem;
+	}
+
+}
