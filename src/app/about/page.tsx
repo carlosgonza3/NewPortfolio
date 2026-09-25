@@ -8,6 +8,8 @@ import { AboutOriginGallery } from "@/components/about/AboutOriginGallery";
 import { AboutOriginTitle } from "@/components/about/AboutOriginTitle";
 import { AboutPortrait } from "@/components/about/AboutPortrait";
 import { AboutSectionEyebrow } from "@/components/about/AboutSectionEyebrow";
+import { AboutSportsWidget } from "@/components/about/AboutSportsWidget";
+import { AboutStoryPanels } from "@/components/about/AboutStoryPanels";
 import { aboutProfile } from "@/data/profile";
 import { assetPath } from "@/lib/asset-path";
 import "./styles/AboutPage.css";
@@ -45,13 +47,13 @@ export default function AboutPage() {
 			</section>
 
 			<section className="about-interests section-shell" data-about-reveal-section>
-				<div className="about-interests__scoreboard" data-about-reveal-content aria-hidden="true">
-					<span>LIVE</span>
-					<strong>90:00</strong>
-					<i>Weekend mode</i>
+				<div className="about-interests__eyebrow">
+					<AboutSectionEyebrow>{aboutProfile.interests.eyebrow}</AboutSectionEyebrow>
+				</div>
+				<div className="about-interests__widget-track">
+					<AboutSportsWidget {...aboutProfile.interests.widget} />
 				</div>
 				<div className="about-interests__copy">
-					<AboutSectionEyebrow>{aboutProfile.interests.eyebrow}</AboutSectionEyebrow>
 					<h2 data-about-reveal-content>{aboutProfile.interests.title}</h2>
 					<p data-about-reveal-content>{aboutProfile.interests.description}</p>
 					<ul className="about-interests__tags" data-about-reveal-content aria-label="Favorite teams and interests">
@@ -60,28 +62,7 @@ export default function AboutPage() {
 				</div>
 			</section>
 
-			<section className="about-story section-shell">
-				<article className="about-story__spark">
-					<div className="about-story__scratch-blocks" aria-hidden="true">
-						<span>when clicked</span>
-						<span>forever</span>
-						<span>create something</span>
-					</div>
-					<div>
-						{"eyebrow" in aboutProfile.spark && typeof aboutProfile.spark.eyebrow === "string" ? (
-							<AboutSectionEyebrow>{aboutProfile.spark.eyebrow}</AboutSectionEyebrow>
-						) : null}
-						<h2>{aboutProfile.spark.title}</h2>
-						<p>{aboutProfile.spark.body}</p>
-					</div>
-				</article>
-
-				<aside className="about-story__principle">
-					<p className="section-index">A principle I carry</p>
-					<blockquote>“{aboutProfile.principle.quote}”</blockquote>
-					<p>{aboutProfile.principle.body}</p>
-				</aside>
-			</section>
+			<AboutStoryPanels principle={aboutProfile.principle} spark={aboutProfile.spark} />
 
 			<section className="about-creative section-shell" data-about-reveal-section>
 				<div className="about-creative__heading">

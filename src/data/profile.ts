@@ -46,6 +46,11 @@ type AboutProfile = {
 		title: string;
 		description: string;
 		tags: ReadonlyArray<string>;
+		widget: {
+			caption: string;
+			status: string;
+			time: string;
+		};
 	};
 	spark: { eyebrow?: string; title: string; body: string };
 	creativeWork: {
@@ -109,10 +114,10 @@ export const aboutProfile = {
 		location: "Montréal · 2026",
 	},
 	origin: {
-		eyebrow: "Where I come from",
+		eyebrow: "Where I come from?",
 		title: "Small in size. Rich in character.",
 		body: [
-			"I grew up in San Salvador, surrounded by a country of volcanoes, lakes, and Pacific beaches. El Salvador may be small, but it is full of color, energy, and places that stay with you.",
+			"I grew up in San Salvador, surrounded by a country of volcanoes, lakes, and Pacific beaches. El Salvador may be small in size, but it is a beautiful country.",
 			"In 2021, I moved to Canada to study Computer Science. Montréal is home now, although I’m open to wherever the right opportunity takes me in Canada.",
 		],
 		photos: [
@@ -123,11 +128,16 @@ export const aboutProfile = {
 		],
 	},
 	interests: {
-		eyebrow: "Away from the keyboard",
+		eyebrow: "Something about me...",
 		title: "There’s usually a game on.",
 		description:
-			"Soccer, Formula 1, hockey, baseball—if something is live, there’s a good chance it’s playing on my TV. I’m a Barcelona supporter and a Red Bull Racing fan, but the best part is always sharing the moment with friends and family.",
-		tags: ["FC Barcelona", "Red Bull Racing", "Hockey", "Baseball", "New food", "Good company"],
+			"Soccer, Formula 1, Canadiens, Blue Jays, something is live, there’s a good chance it’s playing on my TV.",
+		tags: ["FC Barcelona", "Red Bull Racing", "Canadiens", "Blue Jays", "Tennis"],
+		widget: {
+			caption: "Weekend mode",
+			status: "Live",
+			time: "90:00",
+		},
 	},
 	spark: {
 		// eyebrow: "The first spark",
