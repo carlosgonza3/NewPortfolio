@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import type { ReactNode } from "react";
 import { Footer } from "@/components/navigation/Footer";
 import { Navigation } from "@/components/navigation/Navigation";
@@ -25,10 +26,8 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
 
 	return (
 		<html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
-			<head>
-				<script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
-			</head>
 			<body>
+				<Script id="theme-bootstrap" strategy="beforeInteractive">{themeBootstrap}</Script>
 				<a className="skip-link" href="#main-content">
 					Skip to content
 				</a>

@@ -5,9 +5,9 @@ export function Footer() {
 	return (
 		<footer className={styles.footer}>
 			<div>
-				<p className="eyebrow">Have a problem worth solving?</p>
+				{/*<p className="eyebrow">Have a problem worth solving?</p>*/}
 				<a className={styles.cta} href="mailto:hello@carlosgonzalez.dev">
-					Let&apos;s build something <span aria-hidden="true">↗</span>
+					Let&apos;s build something
 				</a>
 			</div>
 			<div className={styles.bottom}>

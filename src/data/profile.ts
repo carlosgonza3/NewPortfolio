@@ -17,6 +17,19 @@ type AboutMedia = {
 	imageAlt: string;
 };
 
+type AboutExperiencePreview = AboutMedia & {
+	detail: string;
+	mediaType: "film" | "archive";
+	status: string;
+	title: string;
+};
+
+export type AboutOriginPhoto = AboutMedia & {
+	label: string;
+	note: string;
+	tone?: "volcano" | "coast" | "lake";
+};
+
 type AboutProfile = {
 	description: string;
 	meta: ReadonlyArray<{ label: string; value: string }>;
@@ -26,7 +39,7 @@ type AboutProfile = {
 		eyebrow: string;
 		title: string;
 		body: ReadonlyArray<string>;
-		photos: ReadonlyArray<AboutMedia & { label: string; note: string; tone?: "volcano" | "coast" | "lake" }>;
+		photos: ReadonlyArray<AboutOriginPhoto>;
 	};
 	interests: {
 		eyebrow: string;
@@ -34,12 +47,18 @@ type AboutProfile = {
 		description: string;
 		tags: ReadonlyArray<string>;
 	};
-	spark: { eyebrow: string; title: string; body: string };
+	spark: { eyebrow?: string; title: string; body: string };
 	creativeWork: {
 		eyebrow: string;
 		title: string;
-		body: string;
-		films: ReadonlyArray<AboutMedia & { title: string; detail: string; status: string }>;
+		body?: string;
+		experiences: ReadonlyArray<{
+			description: string;
+			period: string;
+			previews: ReadonlyArray<AboutExperiencePreview>;
+			strength: string;
+			title: string;
+		}>;
 	};
 	principle: { quote: string; body: string };
 	now: { eyebrow: string; title: string; body: string };
@@ -48,25 +67,25 @@ type AboutProfile = {
 export const approachCapabilities: ApproachCapability[] = [
 	{
 		icon: Waypoints,
-		title: "Plan the work",
+		title: "Plan",
 		description:
 			"I begin by understanding the problem, defining what needs to be built, and dividing the work into clear phases.",
 	},
 	{
 		icon: Blocks,
-		title: "Build the core",
+		title: "Build",
 		description:
 			"I focus first on the features that make the product useful, making sure the main workflows work before adding polish.",
 	},
 	{
 		icon: Wand,
-		title: "Refine the details",
+		title: "Refine",
 		description:
 			"Once the foundation is working, I improve the interactions, responsive behavior, edge cases, and small details that shape the experience.",
 	},
 	{
 		icon: BadgeCheck,
-		title: "Finish it properly",
+		title: "Deploy",
 		description:
 			"I test the complete product, fix what feels unfinished, and prepare it for release without leaving behind half-done work.",
 	},
@@ -76,12 +95,12 @@ export const aboutProfile = {
 	description:
 		"I’m happiest when I’m making something useful, sharing the process with good people, and giving the smallest details the attention they deserve.",
 	meta: [
-		{ label: "Based in", value: "Montréal, Canada" },
 		{ label: "Originally from", value: "El Salvador" },
+		{ label: "Based in", value: "Montréal, Canada" },
 		{ label: "Currently", value: "Freelancing & growing" },
 		{ label: "Next chapter", value: "A job in Canada" },
 	],
-	title: "Curious. Optimistic. Always improving.",
+	title: "Curious. Optimistic. Intentional.",
 	portrait: {
 		// Add the image to public/images/about, then use a path such as "/images/about/portrait.jpg".
 		image: "/images/about/personal-portrait.jpg",
@@ -91,16 +110,16 @@ export const aboutProfile = {
 	},
 	origin: {
 		eyebrow: "Where I come from",
-		title: "Small country. Big perspective.",
+		title: "Small in size. Rich in character.",
 		body: [
 			"I grew up in San Salvador, surrounded by a country of volcanoes, lakes, and Pacific beaches. El Salvador may be small, but it is full of color, energy, and places that stay with you.",
 			"In 2021, I moved to Canada to study Computer Science. Montréal is home now, although I’m open to wherever the right opportunity takes me in Canada.",
 		],
 		photos: [
 			// Add, remove, or reorder objects; the gallery layout updates automatically.
-			{ image: "", imageAlt: "A volcanic landscape in El Salvador", label: "Volcanic horizons", note: "Photo by Carlos", tone: "volcano" },
-			{ image: "", imageAlt: "The Pacific coast of El Salvador", label: "The Pacific coast", note: "Photo by Carlos", tone: "coast" },
-			{ image: "", imageAlt: "A lake surrounded by mountains in El Salvador", label: "Lakes back home", note: "Photo by Carlos", tone: "lake" },
+			{ image: "/images/about/1.jpg", imageAlt: "A beach landscape in El Salvador", label: "Beach Balzamar, La Libertad", note: "Photo by Carlos", tone: "coast" },
+			{ image: "/images/about/2.jpg", imageAlt: "A lake surrounded by mountains in El Salvador", label: "Lago de Coatepeque, Santa Ana", note: "Photo by Carlos", tone: "lake" },
+			{ image: "/images/about/3.jpg", imageAlt: "A lake surrounded by mountains in El Salvador", label: "Lakes back home", note: "Photo by Carlos", tone: "lake" },
 		],
 	},
 	interests: {
@@ -111,23 +130,59 @@ export const aboutProfile = {
 		tags: ["FC Barcelona", "Red Bull Racing", "Hockey", "Baseball", "New food", "Good company"],
 	},
 	spark: {
-		eyebrow: "The first spark",
-		title: "It started with blocks, games, and no sense of time.",
+		// eyebrow: "The first spark",
+		title: "It started with blocks and games",
 		body: "At school, I discovered Scratch—a programming tool that lets kids build with visual blocks. I would spend hours making games, completely absorbed. That was the moment I understood how much was possible with a computer, and the curiosity has stayed with me ever since.",
 	},
 	creativeWork: {
-		eyebrow: "Before the browser",
-		title: "I learned to shape experiences through film and events.",
-		body: "I used to edit videos in Final Cut Pro and directed two short films for a competition in Mexico. Both placed in the top five, two years in a row. Back in El Salvador, I also helped plan a large soccer tournament and a youth conference—experiences that taught me how much better ideas become when a team builds them together.",
-		films: [
-			// Add an image path to use a film still, or add another object to render another card.
-			{ image: "", imageAlt: "Still from Carlos’s first short film", title: "Short film 01", detail: "Top-five finalist · Mexico", status: "YouTube link coming soon" },
-			{ image: "", imageAlt: "Still from Carlos’s second short film", title: "Short film 02", detail: "Top-five finalist · Mexico", status: "YouTube link coming soon" },
+		eyebrow: "Experiences that shaped me",
+		title: "Some of my strengths...",
+		// body: "Directing films, organizing events, and years spent swimming helped me develop the way I lead, collaborate, adapt, and keep improving. These are less a list of achievements than moments that continue to shape how I work.",
+		experiences: [
+			{
+				period: "Film, theatre & video",
+				title: "Short films and stage management",
+				strength: "Creative direction & coordination",
+				description: "I directed two short films with a team of six, turning an idea into a finished seven-minute story. I have also worked as a stage manager across professional theatrical and video productions. These experiences taught me how to communicate a shared vision, coordinate people and moving parts, anticipate what a production needs, and stay composed under pressure.",
+				previews: [
+					// Add an image path to use a film still, or add another object to render another preview.
+					{ image: "", imageAlt: "Still from Carlos’s first short film", title: "Short film 01", detail: "Top-five finalist · Mexico", status: "YouTube link coming soon", mediaType: "film" },
+					{ image: "", imageAlt: "Still from Carlos’s second short film", title: "Short film 02", detail: "Top-five finalist · Mexico", status: "YouTube link coming soon", mediaType: "film" },
+					{ image: "", imageAlt: "Carlos working as a stage manager", title: "Stage management", detail: "Theatrical · video productions", status: "Professional productions", mediaType: "archive" },
+				],
+			},
+			{
+				period: "2019",
+				title: "President of Copa San Ignacio SV",
+				strength: "Planning & coordination",
+				description: "I helped organize a soccer tournament involving around 40 teams. Coordinating the venue, food, schedules, and logistics showed me how much thoughtful preparation matters when many people depend on the same plan.",
+				previews: [
+					{ image: "", imageAlt: "Copa San Ignacio SV tournament", title: "Copa San Ignacio SV", detail: "Venue · food · logistics", status: "Around 40 teams", mediaType: "archive" },
+				],
+			},
+			{
+				period: "2021",
+				title: "Planning committee for Congress Revolution",
+				strength: "Adaptability & responsibility",
+				description: "I was part of the head committee planning a youth conference for more than 600 participants and four international speakers. The event was cancelled shortly before it began because of COVID-19, but the process taught me how to plan at scale, collaborate under pressure, and adapt when circumstances change unexpectedly.",
+				previews: [
+					{ image: "", imageAlt: "Planning materials for the Revolution youth conference", title: "Revolution", detail: "Four international speakers", status: "600+ expected", mediaType: "archive" },
+				],
+			},
+			{
+				period: "Growing up",
+				title: "Years spent swimming",
+				strength: "Discipline & consistency",
+				description: "Swimming was an important part of my childhood. Improving in the pool taught me patience, repetition, and the value of showing up consistently, even when progress is gradual.",
+				previews: [
+					{ image: "", imageAlt: "Carlos during his years as a swimmer", title: "Life in the pool", detail: "A formative childhood discipline", status: "Personal archive", mediaType: "archive" },
+				],
+			},
 		],
 	},
 	principle: {
-		quote: "If I’m going to do something, I want to do the best I can with it.",
-		body: "For me, working software is only the beginning. I care about how it looks, how it feels, and whether the whole experience has been considered from beginning to end. I’ve always admired that philosophy in Apple’s products, and it continues to influence the standard I set for my own work.",
+		quote: "If you do it at all, do it right.",
+		body: "For me, software is only one aspect. I care about the big picture, ask why, and create experiences from beginning to end. I’ve always admired Apple’s philosophy, and it continues to influence the standard I set for my own work.",
 	},
 	now: {
 		eyebrow: "What’s next",
